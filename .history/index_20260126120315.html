@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Thred Test Page</title>
+</head>
+<body>
+  <h1>Test Lead Form (simulate ChatGPT referral)</h1>
+
+  <!-- Fake form with fields matching your config -->
+  <form class="lead-form">
+    <label>Name: <input class="name" type="text" name="name" value="Test User"></label><br>
+    <label>Email: <input class="email" type="email" name="email" value="test@example.com" required></label><br>
+    <label>Company: <input class="companyName" type="text" name="company" value="Test Co"></label><br>
+    <button type="submit">Submit Lead</button>
+  </form>
+
+  <!-- Your script – use relative path for local -->
+  <script src="./thred.js"></script>
+
+  <!-- For testing: simulate ChatGPT referrer -->
+  <script>
+    // Temporarily override referrer for local testing
+    Object.defineProperty(document, 'referrer', { value: 'https://chat.openai.com/', configurable: true });
+    // Or add ?utm_source=chatgpt to URL when loading page
+  </script>
+</body>
+</html>

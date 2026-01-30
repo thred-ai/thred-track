@@ -102,6 +102,7 @@ jobs:
 
       - name: Publish to NPM
         env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           VERSION: ${{ steps.package_version.outputs.version }}
         run: |
           echo "📦 Publishing version $VERSION to NPM with provenance..."

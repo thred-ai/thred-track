@@ -117,7 +117,7 @@ export class Tracker {
     }
 
     if (this.config.type === 'hosted') {
-      let hostedUrlBase = this.config.hostedUrlBase;
+      const hostedUrlBase = this.config.hostedUrlBase;
       if (!hostedUrlBase) {
         this.logger.warn('Cannot track form - no hosted URL base');
         return;

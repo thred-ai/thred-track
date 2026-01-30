@@ -20,7 +20,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
@@ -100,12 +100,7 @@ jobs:
             --content-type "application/json"
 
       - name: Publish to NPM
-        env:
-          VERSION: ${{ steps.package_version.outputs.version }}
-        run: |
-          echo "📦 Publishing version $VERSION to NPM with provenance..."
-          npm publish --access public
-          echo "✅ Published to NPM: @thred-ai/thred-track@$VERSION"
+        run: npm publish --access public
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1

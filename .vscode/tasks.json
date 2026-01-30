@@ -1,0 +1,73 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "🚀 Deploy: Bump Patch & Push",
+      "type": "shell",
+      "command": "npm version patch && git push --follow-tags",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🚀 Deploy: Bump Minor & Push",
+      "type": "shell",
+      "command": "npm version minor && git push --follow-tags",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🚀 Deploy: Bump Major & Push",
+      "type": "shell",
+      "command": "npm version major && git push --follow-tags",
+      "problemMatcher": [],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "🔧 Build: Production",
+      "type": "shell",
+      "command": "npm run build:prod",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "🧪 Test: Run All",
+      "type": "shell",
+      "command": "npm test",
+      "problemMatcher": [],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "📦 Check: Version",
+      "type": "shell",
+      "command": "echo \"Current version: $(node -p \\\"require('./package.json').version\\\")\"",
+      "problemMatcher": []
+    },
+    {
+      "label": "🏷️  Push: Tags Only",
+      "type": "shell",
+      "command": "git push --tags",
+      "problemMatcher": []
+    }
+  ]
+}

@@ -8,7 +8,7 @@ npm run build:prod
 
 echo "📦 Copying to public folder..."
 mkdir -p public
-cp dist/thred.umd.js public/thred.js
+cp dist/thred-track.umd.js public/thred-track.js
 
 echo "🚀 Deploying to Vercel..."
 vercel --prod
@@ -16,4 +16,4 @@ vercel --prod
 echo "✅ Deployed!"
 echo ""
 echo "Usage in HTML:"
-echo '<script src="https://your-domain.vercel.app/thred.js?browserKey=YOUR_KEY"></script>'
+echo '<script src="https://your-domain.vercel.app/thred-track.js?browserKey=YOUR_KEY"></script>'

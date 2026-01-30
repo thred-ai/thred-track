@@ -57,7 +57,7 @@ Or click the **Sync** button (↻) in VS Code status bar
 ## 🎯 What Happens After Push?
 
 1. **GitHub Actions triggers** (see Actions tab in GitHub)
-2. **Builds production** (`dist/thred.umd.js`)
+2. **Builds production** (`dist/thred-track.umd.js`)
 3. **Deploys to Cloudflare R2:**
    - `thred-track-v1.0.1.js` (versioned, immutable)
    - `thred-track.js` (updated to latest)
@@ -84,10 +84,10 @@ Or click the **Sync** button (↻) in VS Code status bar
 ### Check Cloudflare R2
 ```bash
 # Test versioned URL
-curl -I https://cdn.yourdomain.com/thred-track-v1.0.1.js
+curl -I https://cdn.thred.dev/thred-track-v1.0.1.js
 
 # Test latest URL
-curl -I https://cdn.yourdomain.com/thred-track.js
+curl -I https://cdn.thred.dev/thred-track.js
 ```
 
 ### Check NPM

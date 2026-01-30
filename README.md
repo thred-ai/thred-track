@@ -30,7 +30,7 @@ yarn add thred-track
 ### CDN (Script Tag)
 
 ```html
-<script src="https://unpkg.com/thred-track/dist/thred.umd.js?browserKey=YOUR_KEY"></script>
+<script src="https://unpkg.com/thred-track/dist/thred-track.umd.js?browserKey=YOUR_KEY"></script>
 ```
 
 ## Quick Start
@@ -40,7 +40,7 @@ yarn add thred-track
 Add the script with your browser key, and it will auto-initialize:
 
 ```html
-<script src="./dist/thred.umd.js?browserKey=751fe47a-d4f5-496a-ba9c-fb298c281e8a"></script>
+<script src="./dist/thred-track.umd.js?browserKey=751fe47a-d4f5-496a-ba9c-fb298c281e8a"></script>
 ```
 
 The SDK will automatically:
@@ -155,7 +155,7 @@ thred.destroy();
   <button type="submit">Submit</button>
 </form>
 
-<script src="./dist/thred.umd.js?browserKey=YOUR_KEY"></script>
+<script src="./dist/thred-track.umd.js?browserKey=YOUR_KEY"></script>
 ```
 
 ### Programmatic Tracking
@@ -259,7 +259,7 @@ thred-track/
 
 The SDK builds to multiple formats:
 
-- **UMD** (`dist/thred.umd.js`) - For script tags
+- **UMD** (`dist/thred-track.umd.js`) - For script tags
 - **CommonJS** (`dist/index.js`) - For Node.js
 - **ES Module** (`dist/index.esm.js`) - For bundlers
 - **TypeScript** (`dist/index.d.ts`) - Type definitions

@@ -12,15 +12,15 @@ echo "🏗️  Building production version..."
 npm run build:prod
 
 echo "📦 Uploading to server..."
-scp dist/thred.umd.js ${SERVER}:${REMOTE_PATH}/thred-v${VERSION}.js
+scp dist/thred-track.umd.js ${SERVER}:${REMOTE_PATH}/thred-track-v${VERSION}.js
 
 echo "🔗 Creating symlink to latest..."
-ssh ${SERVER} "cd ${REMOTE_PATH} && ln -sf thred-v${VERSION}.js thred-latest.js"
+ssh ${SERVER} "cd ${REMOTE_PATH} && ln -sf thred-track-v${VERSION}.js thred-track.js"
 
 echo "✅ Deployed!"
 echo ""
 echo "Usage in HTML:"
-echo "<script src=\"https://yourcdn.com/thred-latest.js?browserKey=YOUR_KEY\"></script>"
+echo "<script src=\"https://yourcdn.com/thred-track.js?browserKey=YOUR_KEY\"></script>"
 echo ""
 echo "Or version-specific:"
-echo "<script src=\"https://yourcdn.com/thred-v${VERSION}.js?browserKey=YOUR_KEY\"></script>"
+echo "<script src=\"https://yourcdn.com/thred-track-v${VERSION}.js?browserKey=YOUR_KEY\"></script>"

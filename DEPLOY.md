@@ -11,42 +11,42 @@ npm run build:prod
 ```
 
 This creates an optimized, minified single file:
-- **File**: `dist/thred.umd.js`
+- **File**: `dist/thred-track.umd.js`
 - **Size**: ~7.5 KB (minified)
 - **Dependencies**: None (standalone)
 
 ### 2. Upload to Your CDN/Server
 
-The `dist/thred.umd.js` file is completely self-contained. Upload it to any web server or CDN:
+The `dist/thred-track.umd.js` file is completely self-contained. Upload it to any web server or CDN:
 
 #### Option A: Your Own Server
 
 ```bash
 # SCP to server
-scp dist/thred.umd.js user@yourserver.com:/var/www/cdn/thred.js
+scp dist/thred-track.umd.js user@yourserver.com:/var/www/cdn/thred-track.js
 
 # Or rsync
-rsync -avz dist/thred.umd.js user@yourserver.com:/var/www/cdn/
+rsync -avz dist/thred-track.umd.js user@yourserver.com:/var/www/cdn/
 ```
 
 #### Option B: CDN Services
 
 **Cloudflare R2 / S3:**
 ```bash
-aws s3 cp dist/thred.umd.js s3://your-bucket/thred.js --acl public-read
+aws s3 cp dist/thred-track.umd.js s3://your-bucket/thred-track.js --acl public-read
 ```
 
 **Vercel:**
 ```bash
 # Add to /public folder
-cp dist/thred.umd.js public/thred.js
+cp dist/thred-track.umd.js public/thred-track.js
 vercel --prod
 ```
 
 **Netlify:**
 ```bash
 # Add to /public folder
-cp dist/thred.umd.js public/thred.js
+cp dist/thred-track.umd.js public/thred-track.js
 netlify deploy --prod
 ```
 
@@ -54,7 +54,7 @@ netlify deploy --prod
 
 ```html
 <!-- Replace old script with your hosted version -->
-<script src="https://cdn.yourdomain.com/thred.js?browserKey=YOUR_KEY"></script>
+<script src="https://cdn.yourdomain.com/thred-track.js?browserKey=YOUR_KEY"></script>
 ```
 
 That's it! The script will auto-initialize when loaded.
@@ -65,14 +65,14 @@ After building, you get:
 
 ```
 dist/
-├── thred.umd.js        # ← Single file to deploy (7.5 KB)
-├── thred.umd.js.map    # Source map (optional, for debugging)
+├── thred-track.umd.js        # ← Single file to deploy (7.5 KB)
+├── thred-track.umd.js.map    # Source map (optional, for debugging)
 ├── index.js            # CommonJS (for npm package)
 ├── index.esm.js        # ES Module (for bundlers)
 └── index.d.ts          # TypeScript definitions
 ```
 
-**You only need to upload `thred.umd.js`** for script tag usage.
+**You only need to upload `thred-track.umd.js`** for script tag usage.
 
 ## Versioning Strategy
 
@@ -80,15 +80,15 @@ dist/
 
 ```bash
 # Rename with version
-cp dist/thred.umd.js dist/thred-v1.0.0.js
+cp dist/thred-track.umd.js dist/thred-track-v1.0.0.js
 
 # Upload
-scp dist/thred-v1.0.0.js user@server:/var/www/cdn/
+scp dist/thred-track-v1.0.0.js user@server:/var/www/cdn/
 ```
 
 Usage:
 ```html
-<script src="https://cdn.yourdomain.com/thred-v1.0.0.js?browserKey=YOUR_KEY"></script>
+<script src="https://cdn.thred.dev/thred-v1.0.0.js?browserKey=YOUR_KEY"></script>
 ```
 
 ### Option 2: Version in Path
@@ -96,12 +96,12 @@ Usage:
 ```bash
 # Create version directory
 mkdir -p dist/v1.0.0
-cp dist/thred.umd.js dist/v1.0.0/thred.js
+cp dist/thred-track.umd.js dist/v1.0.0/thred-track.js
 ```
 
 Usage:
 ```html
-<script src="https://cdn.yourdomain.com/v1.0.0/thred.js?browserKey=YOUR_KEY"></script>
+<script src="https://cdn.yourdomain.com/v1.0.0/thred-track.js?browserKey=YOUR_KEY"></script>
 ```
 
 ### Option 3: Use "latest" Symlink
@@ -109,23 +109,23 @@ Usage:
 On your server:
 ```bash
 # Upload versioned file
-scp dist/thred.umd.js user@server:/var/www/cdn/thred-v1.0.0.js
+scp dist/thred-track.umd.js user@server:/var/www/cdn/thred-track-v1.0.0.js
 
 # Create/update symlink
-ssh user@server "ln -sf /var/www/cdn/thred-v1.0.0.js /var/www/cdn/thred-latest.js"
+ssh user@server "ln -sf /var/www/cdn/thred-track-v1.0.0.js /var/www/cdn/thred-track-latest.js"
 ```
 
 Usage:
 ```html
 <!-- Always get latest version -->
-<script src="https://cdn.yourdomain.com/thred-latest.js?browserKey=YOUR_KEY"></script>
+<script src="https://cdn.thred.dev/thred-track-latest.js?browserKey=YOUR_KEY"></script>
 ```
 
 ## Deployment Checklist
 
 - [ ] Run tests: `npm test`
 - [ ] Build production: `npm run build:prod`
-- [ ] Verify file size: `ls -lh dist/thred.umd.js`
+- [ ] Verify file size: `ls -lh dist/thred-track.umd.js`
 - [ ] Test locally: Open `test-compiled.html?utm_source=chatgpt`
 - [ ] Upload to server/CDN
 - [ ] Update HTML to use new URL
@@ -138,7 +138,7 @@ When hosting, set appropriate cache headers:
 
 ### Nginx
 ```nginx
-location /thred.js {
+location /thred-track.js {
     add_header Cache-Control "public, max-age=31536000, immutable";
     add_header Access-Control-Allow-Origin "*";
 }
@@ -164,15 +164,15 @@ Always keep previous versions:
 ```bash
 # On server
 /var/www/cdn/
-├── thred-v1.0.0.js
-├── thred-v1.0.1.js
-├── thred-v1.0.2.js
-└── thred-latest.js -> thred-v1.0.2.js
+├── thred-track-v1.0.0.js
+├── thred-track-v1.0.1.js
+├── thred-track-v1.0.2.js
+└── thred-track-latest.js -> thred-track-v1.0.2.js
 ```
 
 To rollback:
 ```bash
-ssh user@server "ln -sf /var/www/cdn/thred-v1.0.1.js /var/www/cdn/thred-latest.js"
+ssh user@server "ln -sf /var/www/cdn/thred-track-v1.0.1.js /var/www/cdn/thred-track-latest.js"
 ```
 
 ## Monitoring
@@ -190,13 +190,13 @@ After deployment, monitor:
 
 Generate SRI hash:
 ```bash
-openssl dgst -sha384 -binary dist/thred.umd.js | openssl base64 -A
+openssl dgst -sha384 -binary dist/thred-track.umd.js | openssl base64 -A
 ```
 
 Use in HTML:
 ```html
 <script 
-  src="https://cdn.yourdomain.com/thred.js?browserKey=YOUR_KEY"
+  src="https://cdn.yourdomain.com/thred-track.js?browserKey=YOUR_KEY"
   integrity="sha384-YOUR_HASH_HERE"
   crossorigin="anonymous">
 </script>
@@ -250,13 +250,13 @@ jobs:
 
 ```bash
 # Test script loads
-curl -I https://cdn.yourdomain.com/thred.js
+curl -I https://cdn.yourdomain.com/thred-track.js
 
 # Test with browserKey
-curl "https://cdn.yourdomain.com/thred.js?browserKey=test" | head -n 5
+curl "https://cdn.yourdomain.com/thred-track.js?browserKey=test" | head -n 5
 
 # Check file size
-curl -s https://cdn.yourdomain.com/thred.js | wc -c
+curl -s https://cdn.yourdomain.com/thred-track.js | wc -c
 ```
 
 ## Troubleshooting

@@ -308,7 +308,7 @@ npm run build:prod
 
 # 2. Deploy to R2
 VERSION=$(node -p "require('./package.json').version")
-aws s3 cp dist/thred.umd.js \
+aws s3 cp dist/thred-track.umd.js \
   s3://thred-static/thred-track-v$VERSION.js \
   --endpoint-url https://YOUR_ACCOUNT_ID.r2.cloudflarestorage.com \
   --acl public-read

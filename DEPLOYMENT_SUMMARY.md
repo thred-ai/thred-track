@@ -57,7 +57,7 @@ npm version patch && git push --follow-tags
 ### What Happens
 1. Version bumps (e.g., 1.0.1 → 1.0.2)
 2. GitHub Actions triggers
-3. Builds `dist/thred.umd.js`
+3. Builds `dist/thred-track.umd.js`
 4. Deploys to R2:
    - `thred-track-v1.0.2.js` (new versioned file)
    - `thred-track.js` (updated to v1.0.2)
@@ -133,7 +133,7 @@ git push --follow-tags
       ↓
 GitHub Actions triggered (30s)
       ↓
-Build dist/thred.umd.js (1-2 min)
+Build dist/thred-track.umd.js (1-2 min)
       ↓
 Upload to R2 (30s)
 ├── thred-track-v1.0.1.js

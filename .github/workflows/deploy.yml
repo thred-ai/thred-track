@@ -90,7 +90,6 @@ jobs:
           aws s3 cp dist/manifest.json \
             s3://thred-static/manifest.json \
             --endpoint-url ${{ secrets.R2_ENDPOINT }} \
-            \
             --cache-control "public, max-age=60" \
             --content-type "application/json"
 

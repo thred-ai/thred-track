@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thred SDK - Programmatic API Example</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #333; }
+    .section {
+      background: #f5f5f5;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    button {
+      background: #28a745;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background: #218838;
+    }
+    .info {
+      background: #fff3cd;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 20px 0;
+      border-left: 4px solid #ffc107;
+    }
+    pre {
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Thred SDK - Programmatic API Example</h1>
+  
+  <div class="info">
+    <strong>This example shows how to use the SDK programmatically.</strong><br>
+    Add <code>?utm_source=chatgpt</code> to URL to activate tracking.
+  </div>
+
+  <div class="section">
+    <h2>SDK Methods</h2>
+    <button onclick="trackPageView()">Track Page View</button>
+    <button onclick="identifyUser()">Identify User</button>
+    <button onclick="getFingerprint()">Get Fingerprint</button>
+    <button onclick="checkChatGPT()">Check ChatGPT Source</button>
+  </div>
+
+  <div class="section">
+    <h2>Console Output</h2>
+    <pre id="output">Open browser console for detailed logs...</pre>
+  </div>
+
+  <div class="section">
+    <h2>Example Code</h2>
+    <pre><code>// Initialize SDK manually
+import { ThredSDK } from 'thredjs';
+
+const thred = new ThredSDK({
+  browserKey: 'your-browser-key',
+  debug: true,
+  autoInit: false, // Manual init
+});
+
+// Initialize
+await thred.init();
+
+// Track page view
+await thred.trackPageView();
+
+// Identify user
+await thred.identify({
+  name: 'John Doe',
+  email: 'john@example.com',
+  company: 'Acme Inc',
+});
+
+// Get fingerprint
+const fp = thred.getFingerprint();
+
+// Check source
+const fromChatGPT = thred.isFromChatGPT();</code></pre>
+  </div>
+
+  <!-- Load SDK as module -->
+  <script type="module">
+    import { ThredSDK } from '../dist/index.esm.js';
+
+    // Initialize SDK with debug mode
+    const thred = new ThredSDK({
+      browserKey: '751fe47a-d4f5-496a-ba9c-fb298c281e8a',
+      debug: true,
+      autoInit: true,
+    });
+
+    // Make SDK available globally for button handlers
+    window.thredSDK = thred;
+
+    // Log functions
+    window.trackPageView = async () => {
+      console.log('📊 Tracking page view...');
+      await thred.trackPageView();
+      log('Page view tracked!');
+    };
+
+    window.identifyUser = async () => {
+      console.log('👤 Identifying user...');
+      await thred.identify({
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        company: 'Acme Corp',
+      });
+      log('User identified!');
+    };
+
+    window.getFingerprint = () => {
+      const fp = thred.getFingerprint();
+      console.log('🔍 Fingerprint:', fp);
+      log(`Fingerprint: ${fp || 'Not available'}`);
+    };
+
+    window.checkChatGPT = () => {
+      const isChatGPT = thred.isFromChatGPT();
+      console.log('🤖 From ChatGPT:', isChatGPT);
+      log(`From ChatGPT: ${isChatGPT ? 'Yes ✓' : 'No ✗'}`);
+    };
+
+    function log(message) {
+      const output = document.getElementById('output');
+      output.textContent = `${new Date().toLocaleTimeString()} - ${message}\n` + output.textContent;
+    }
+  </script>
+</body>
+</html>

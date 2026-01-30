@@ -1,0 +1,160 @@
+name: Deploy to R2 and NPM
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Triggers on version tags like v1.0.0
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Get version from package.json
+        id: package_version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📦 Package version: $VERSION"
+
+      - name: Build production
+        run: npm run build:prod
+
+      - name: Configure AWS CLI for R2
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          aws-region: auto
+
+      - name: Deploy to Cloudflare R2
+        env:
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          VERSION: ${{ steps.package_version.outputs.version }}
+        run: |
+          echo "🚀 Deploying version $VERSION to Cloudflare R2..."
+          
+          # Upload versioned file
+          aws s3 cp dist/thred.umd.js \
+            s3://thred-static/thred-v$VERSION.js \
+            --endpoint-url $R2_ENDPOINT \
+            --acl public-read \
+            --cache-control "public, max-age=31536000, immutable" \
+            --content-type "application/javascript"
+          
+          # Upload as latest (for convenience)
+          aws s3 cp dist/thred.umd.js \
+            s3://thred-static/thred-latest.js \
+            --endpoint-url $R2_ENDPOINT \
+            --acl public-read \
+            --cache-control "public, max-age=3600" \
+            --content-type "application/javascript"
+          
+          # Upload source map (optional)
+          aws s3 cp dist/thred.umd.js.map \
+            s3://thred-static/thred-v$VERSION.js.map \
+            --endpoint-url $R2_ENDPOINT \
+            --acl public-read \
+            --cache-control "public, max-age=31536000, immutable" \
+            --content-type "application/json"
+          
+          echo "✅ Deployed to R2:"
+          echo "   - https://your-r2-domain.com/thred-v$VERSION.js"
+          echo "   - https://your-r2-domain.com/thred-latest.js"
+
+      - name: Create deployment manifest
+        env:
+          VERSION: ${{ steps.package_version.outputs.version }}
+        run: |
+          cat > dist/manifest.json <<EOF
+          {
+            "version": "$VERSION",
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "commit": "${{ github.sha }}",
+            "files": {
+              "versioned": "thred-v$VERSION.js",
+              "latest": "thred-latest.js"
+            }
+          }
+          EOF
+          
+          # Upload manifest
+          aws s3 cp dist/manifest.json \
+            s3://thred-static/manifest.json \
+            --endpoint-url ${{ secrets.R2_ENDPOINT }} \
+            --acl public-read \
+            --cache-control "public, max-age=60" \
+            --content-type "application/json"
+
+      - name: Publish to NPM
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          VERSION: ${{ steps.package_version.outputs.version }}
+        run: |
+          echo "📦 Publishing version $VERSION to NPM..."
+          npm publish
+          echo "✅ Published to NPM: thredjs@$VERSION"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            dist/thred.umd.js
+            dist/thred.umd.js.map
+            dist/index.js
+            dist/index.esm.js
+            dist/index.d.ts
+          body: |
+            ## Version ${{ steps.package_version.outputs.version }}
+            
+            ### CDN Usage (Cloudflare R2)
+            ```html
+            <!-- Versioned (recommended) -->
+            <script src="https://your-r2-domain.com/thred-v${{ steps.package_version.outputs.version }}.js?browserKey=YOUR_KEY"></script>
+            
+            <!-- Latest (auto-updates) -->
+            <script src="https://your-r2-domain.com/thred-latest.js?browserKey=YOUR_KEY"></script>
+            ```
+            
+            ### NPM Usage
+            ```bash
+            npm install thredjs@${{ steps.package_version.outputs.version }}
+            ```
+            
+            ### Changes
+            See [CHANGELOG.md](CHANGELOG.md) for details.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deployment summary
+        env:
+          VERSION: ${{ steps.package_version.outputs.version }}
+        run: |
+          echo "## 🎉 Deployment Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Version: $VERSION" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "#### Cloudflare R2" >> $GITHUB_STEP_SUMMARY
+          echo "- Versioned: \`thred-v$VERSION.js\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Latest: \`thred-latest.js\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "#### NPM" >> $GITHUB_STEP_SUMMARY
+          echo "- Package: \`thredjs@$VERSION\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Registry: https://www.npmjs.com/package/thredjs" >> $GITHUB_STEP_SUMMARY

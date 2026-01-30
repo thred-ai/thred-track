@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Compiled Thred SDK</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+    }
+    .success { color: #22c55e; font-weight: bold; }
+    .info { background: #dbeafe; padding: 15px; border-radius: 8px; margin: 20px 0; }
+    form { background: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #d1d5db; border-radius: 4px; }
+    button { background: #3b82f6; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #2563eb; }
+  </style>
+</head>
+<body>
+  <h1>✅ Compiled Thred SDK Test</h1>
+  
+  <div class="info">
+    <strong>Using:</strong> <code>dist/thred.umd.js</code> (compiled from TypeScript)<br>
+    <strong>Test URL:</strong> Add <code>?utm_source=chatgpt</code> to activate tracking
+  </div>
+
+  <div id="status">
+    <h3>SDK Status:</h3>
+    <ul>
+      <li>Loaded: <span id="loaded">❌</span></li>
+      <li>From ChatGPT: <span id="chatgpt">❌</span></li>
+      <li>Fingerprint: <span id="fingerprint">Loading...</span></li>
+    </ul>
+  </div>
+
+  <form id="form">
+    <h3>Test Form</h3>
+    <input type="text" name="name" placeholder="Name" value="Test User" required>
+    <input type="email" name="email" placeholder="Email" value="test@example.com" required>
+    <input type="text" name="company" placeholder="Company" value="Test Company">
+    <button type="submit">Submit Lead</button>
+  </form>
+
+  <!-- Load compiled SDK -->
+  <script src="./dist/thred.umd.js?browserKey=751fe47a-d4f5-496a-ba9c-fb298c281e8a"></script>
+
+  <script>
+    // Check if SDK loaded
+    setTimeout(() => {
+      if (window.Thred) {
+        document.getElementById('loaded').innerHTML = '<span class="success">✅ Yes</span>';
+        document.getElementById('chatgpt').innerHTML = window.Thred.isFromChatGPT() 
+          ? '<span class="success">✅ Yes</span>' 
+          : '❌ No (add ?utm_source=chatgpt)';
+        
+        setTimeout(() => {
+          const fp = window.Thred.getFingerprint();
+          document.getElementById('fingerprint').innerHTML = fp 
+            ? `<span class="success">✅ ${fp.substring(0, 16)}...</span>` 
+            : '⏳ Generating...';
+        }, 2000);
+      } else {
+        document.getElementById('loaded').textContent = '❌ Failed to load';
+      }
+    }, 500);
+
+    // Form handler
+    document.getElementById('form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('✅ Form submitted! Check browser console for tracking logs.');
+    });
+
+    console.log('🎉 Test page loaded - check DevTools console for Thred SDK logs');
+  </script>
+</body>
+</html>

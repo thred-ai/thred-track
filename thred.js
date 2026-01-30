@@ -144,8 +144,8 @@
   }
 
   function initFormTracking(config) {
-    if (!config?.formId) {
-      console.debug("[Thred] No formId in config");
+    if (!config) {
+      console.debug("[Thred] No config");
       return;
     }
 

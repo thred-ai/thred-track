@@ -46,7 +46,7 @@ jobs:
           aws s3 cp dist/thred.umd.js \
             s3://thred-static/thred-track-v$VERSION.js \
             --endpoint-url $R2_ENDPOINT \
-            --acl public-read \
+            \
             --cache-control "public, max-age=31536000, immutable" \
             --content-type "application/javascript"
           
@@ -54,7 +54,7 @@ jobs:
           aws s3 cp dist/thred.umd.js \
             s3://thred-static/thred-track.js \
             --endpoint-url $R2_ENDPOINT \
-            --acl public-read \
+            \
             --cache-control "public, max-age=3600" \
             --content-type "application/javascript"
           
@@ -62,7 +62,7 @@ jobs:
           aws s3 cp dist/thred.umd.js.map \
             s3://thred-static/thred-track-v$VERSION.js.map \
             --endpoint-url $R2_ENDPOINT \
-            --acl public-read \
+            \
             --cache-control "public, max-age=31536000, immutable" \
             --content-type "application/json"
           
@@ -90,7 +90,7 @@ jobs:
           aws s3 cp dist/manifest.json \
             s3://thred-static/manifest.json \
             --endpoint-url ${{ secrets.R2_ENDPOINT }} \
-            --acl public-read \
+            \
             --cache-control "public, max-age=60" \
             --content-type "application/json"
 

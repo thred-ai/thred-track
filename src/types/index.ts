@@ -4,10 +4,12 @@
 
 export interface ThredConfig {
   enabled: boolean;
-  formId: string;
-  emailId: string;
-  nameId: string;
-  companyId: string;
+  type: "hosted" | "custom",
+  hostedUrlBase?: string;
+  formId?: string;
+  emailId?: string;
+  nameId?: string;
+  companyId?: string;
 }
 
 export interface ThredOptions {

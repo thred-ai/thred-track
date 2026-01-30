@@ -18,8 +18,8 @@ Please be respectful and constructive in all interactions. We aim to foster an i
 1. Fork the repository
 2. Clone your fork:
    ```bash
-   git clone https://github.com/yourusername/thredjs.git
-   cd thredjs
+   git clone https://github.com/yourusername/thred-track.git
+   cd thred-track
    ```
 3. Install dependencies:
    ```bash

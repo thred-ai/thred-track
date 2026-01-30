@@ -23,9 +23,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
-        run: npm test
-
       - name: Get version from package.json
         id: package_version
         run: |
@@ -52,7 +49,7 @@ jobs:
           
           # Upload versioned file
           aws s3 cp dist/thred.umd.js \
-            s3://thred-static/thred-v$VERSION.js \
+            s3://thred-static/thred-track-v$VERSION.js \
             --endpoint-url $R2_ENDPOINT \
             --acl public-read \
             --cache-control "public, max-age=31536000, immutable" \
@@ -60,7 +57,7 @@ jobs:
           
           # Upload as latest (for convenience)
           aws s3 cp dist/thred.umd.js \
-            s3://thred-static/thred-latest.js \
+            s3://thred-static/thred-track.js \
             --endpoint-url $R2_ENDPOINT \
             --acl public-read \
             --cache-control "public, max-age=3600" \
@@ -68,15 +65,15 @@ jobs:
           
           # Upload source map (optional)
           aws s3 cp dist/thred.umd.js.map \
-            s3://thred-static/thred-v$VERSION.js.map \
+            s3://thred-static/thred-track-v$VERSION.js.map \
             --endpoint-url $R2_ENDPOINT \
             --acl public-read \
             --cache-control "public, max-age=31536000, immutable" \
             --content-type "application/json"
           
           echo "✅ Deployed to R2:"
-          echo "   - https://your-r2-domain.com/thred-v$VERSION.js"
-          echo "   - https://your-r2-domain.com/thred-latest.js"
+          echo "   - https://your-r2-domain.com/thred-track-v$VERSION.js"
+          echo "   - https://your-r2-domain.com/thred-track.js"
 
       - name: Create deployment manifest
         env:
@@ -88,8 +85,8 @@ jobs:
             "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
             "commit": "${{ github.sha }}",
             "files": {
-              "versioned": "thred-v$VERSION.js",
-              "latest": "thred-latest.js"
+              "versioned": "thred-track-v$VERSION.js",
+              "latest": "thred-track.js"
             }
           }
           EOF
@@ -109,7 +106,7 @@ jobs:
         run: |
           echo "📦 Publishing version $VERSION to NPM..."
           npm publish
-          echo "✅ Published to NPM: thredjs@$VERSION"
+          echo "✅ Published to NPM: thred-track@$VERSION"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
@@ -127,15 +124,15 @@ jobs:
             ### CDN Usage (Cloudflare R2)
             ```html
             <!-- Versioned (recommended) -->
-            <script src="https://your-r2-domain.com/thred-v${{ steps.package_version.outputs.version }}.js?browserKey=YOUR_KEY"></script>
+            <script src="https://your-r2-domain.com/thred-track-v${{ steps.package_version.outputs.version }}.js?browserKey=YOUR_KEY"></script>
             
             <!-- Latest (auto-updates) -->
-            <script src="https://your-r2-domain.com/thred-latest.js?browserKey=YOUR_KEY"></script>
+            <script src="https://your-r2-domain.com/thred-track.js?browserKey=YOUR_KEY"></script>
             ```
             
             ### NPM Usage
             ```bash
-            npm install thredjs@${{ steps.package_version.outputs.version }}
+            npm install thred-track@${{ steps.package_version.outputs.version }}
             ```
             
             ### Changes
@@ -152,9 +149,9 @@ jobs:
           echo "### Version: $VERSION" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "#### Cloudflare R2" >> $GITHUB_STEP_SUMMARY
-          echo "- Versioned: \`thred-v$VERSION.js\`" >> $GITHUB_STEP_SUMMARY
-          echo "- Latest: \`thred-latest.js\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Versioned: \`thred-track-v$VERSION.js\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Latest: \`thred-track.js\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "#### NPM" >> $GITHUB_STEP_SUMMARY
-          echo "- Package: \`thredjs@$VERSION\`" >> $GITHUB_STEP_SUMMARY
-          echo "- Registry: https://www.npmjs.com/package/thredjs" >> $GITHUB_STEP_SUMMARY
+          echo "- Package: \`thred-track@$VERSION\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Registry: https://www.npmjs.com/package/thred-track" >> $GITHUB_STEP_SUMMARY

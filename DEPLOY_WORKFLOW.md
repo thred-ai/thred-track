@@ -59,9 +59,9 @@ Or click the **Sync** button (↻) in VS Code status bar
 1. **GitHub Actions triggers** (see Actions tab in GitHub)
 2. **Builds production** (`dist/thred.umd.js`)
 3. **Deploys to Cloudflare R2:**
-   - `thred-v1.0.1.js` (versioned, immutable)
-   - `thred-latest.js` (updated to latest)
-4. **Publishes to NPM:** `thredjs@1.0.1`
+   - `thred-track-v1.0.1.js` (versioned, immutable)
+   - `thred-track.js` (updated to latest)
+4. **Publishes to NPM:** `thred-track@1.0.1`
 5. **Creates GitHub Release** with changelog
 
 ## ⏱️ Timeline
@@ -84,22 +84,22 @@ Or click the **Sync** button (↻) in VS Code status bar
 ### Check Cloudflare R2
 ```bash
 # Test versioned URL
-curl -I https://cdn.yourdomain.com/thred-v1.0.1.js
+curl -I https://cdn.yourdomain.com/thred-track-v1.0.1.js
 
 # Test latest URL
-curl -I https://cdn.yourdomain.com/thred-latest.js
+curl -I https://cdn.yourdomain.com/thred-track.js
 ```
 
 ### Check NPM
 ```bash
-npm view thredjs
+npm view thred-track
 # or
-npm view thredjs@1.0.1
+npm view thred-track@1.0.1
 ```
 
 ### Check in Browser
 ```html
-<script src="https://cdn.yourdomain.com/thred-v1.0.1.js?browserKey=YOUR_KEY"></script>
+<script src="https://cdn.yourdomain.com/thred-track-v1.0.1.js?browserKey=YOUR_KEY"></script>
 ```
 
 ## 🔄 Typical Development Workflow
@@ -268,7 +268,7 @@ Now press `Cmd+Shift+D` to deploy instantly!
 
 ### NPM
 - **Package page:** Downloads, version history
-- **npm view thredjs:** CLI stats
+- **npm view thred-track:** CLI stats
 
 ## 🔄 Rollback Procedure
 
@@ -277,20 +277,20 @@ If a deployment goes wrong:
 ### Option 1: Users use previous version
 ```html
 <!-- Just point to older version -->
-<script src="https://cdn.yourdomain.com/thred-v1.0.0.js?browserKey=YOUR_KEY"></script>
+<script src="https://cdn.yourdomain.com/thred-track-v1.0.0.js?browserKey=YOUR_KEY"></script>
 ```
 
 ### Option 2: Update "latest" to previous version
 ```bash
 # Via AWS CLI
-aws s3 cp s3://thred-static/thred-v1.0.0.js \
-  s3://thred-static/thred-latest.js \
+aws s3 cp s3://thred-static/thred-track-v1.0.0.js \
+  s3://thred-static/thred-track.js \
   --endpoint-url https://ACCOUNT_ID.r2.cloudflarestorage.com
 ```
 
 ### Option 3: Deprecate NPM version
 ```bash
-npm deprecate thredjs@1.0.1 "Critical bug - use 1.0.2"
+npm deprecate thred-track@1.0.1 "Critical bug - use 1.0.2"
 ```
 
 ### Option 4: Deploy fix quickly

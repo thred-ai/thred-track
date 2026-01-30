@@ -97,13 +97,13 @@ Ensure these fields are correct:
 
 ```json
 {
-  "name": "thredjs",
+  "name": "thred-track",
   "version": "1.0.0",
   "author": "Your Name",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/thredjs.git"
+    "url": "git+https://github.com/yourusername/thred-track.git"
   }
 }
 ```
@@ -135,8 +135,8 @@ git push origin v1.0.0
 1. Runs tests
 2. Builds production
 3. Deploys to R2 as:
-   - `thred-v1.0.0.js` (versioned, immutable)
-   - `thred-latest.js` (always latest)
+   - `thred-track-v1.0.0.js` (versioned, immutable)
+   - `thred-track.js` (always latest)
 4. Publishes to NPM
 5. Creates GitHub Release
 
@@ -197,20 +197,20 @@ After deployment, files are available at:
 
 ```html
 <!-- Versioned (recommended for production) -->
-<script src="https://cdn.yourdomain.com/thred-v1.0.0.js?browserKey=YOUR_KEY"></script>
+<script src="https://cdn.yourdomain.com/thred-track-v1.0.0.js?browserKey=YOUR_KEY"></script>
 
 <!-- Latest (auto-updates, use for testing) -->
-<script src="https://cdn.yourdomain.com/thred-latest.js?browserKey=YOUR_KEY"></script>
+<script src="https://cdn.yourdomain.com/thred-track.js?browserKey=YOUR_KEY"></script>
 ```
 
 ### NPM
 
 ```bash
 # Install specific version
-npm install thredjs@1.0.0
+npm install thred-track@1.0.0
 
 # Install latest
-npm install thredjs
+npm install thred-track
 ```
 
 ## Verify Deployment
@@ -223,17 +223,17 @@ aws s3 ls s3://thred-static/ \
   --endpoint-url https://YOUR_ACCOUNT_ID.r2.cloudflarestorage.com
 
 # Download and verify
-curl https://cdn.yourdomain.com/thred-v1.0.0.js | head -c 100
+curl https://cdn.yourdomain.com/thred-track-v1.0.0.js | head -c 100
 ```
 
 ### Check NPM
 
 ```bash
 # View published package
-npm view thredjs
+npm view thred-track
 
 # Check specific version
-npm view thredjs@1.0.0
+npm view thred-track@1.0.0
 ```
 
 ### Check GitHub Release
@@ -248,19 +248,19 @@ Old versions remain accessible:
 
 ```html
 <!-- Rollback to v1.0.0 -->
-<script src="https://cdn.yourdomain.com/thred-v1.0.0.js?browserKey=YOUR_KEY"></script>
+<script src="https://cdn.yourdomain.com/thred-track-v1.0.0.js?browserKey=YOUR_KEY"></script>
 ```
 
 ### NPM Rollback
 
 ```bash
 # Users can install old version
-npm install thredjs@1.0.0
+npm install thred-track@1.0.0
 ```
 
 You can also deprecate a bad version:
 ```bash
-npm deprecate thredjs@1.0.1 "Bug found, use 1.0.2 instead"
+npm deprecate thred-track@1.0.1 "Bug found, use 1.0.2 instead"
 ```
 
 ## Troubleshooting
@@ -309,7 +309,7 @@ npm run build:prod
 # 2. Deploy to R2
 VERSION=$(node -p "require('./package.json').version")
 aws s3 cp dist/thred.umd.js \
-  s3://thred-static/thred-v$VERSION.js \
+  s3://thred-static/thred-track-v$VERSION.js \
   --endpoint-url https://YOUR_ACCOUNT_ID.r2.cloudflarestorage.com \
   --acl public-read
 
@@ -329,5 +329,5 @@ npm publish
 
 For issues:
 - GitHub Issues: [your-repo]/issues
-- NPM Package: https://www.npmjs.com/package/thredjs
+- NPM Package: https://www.npmjs.com/package/thred-track
 - Email: support@thred.dev

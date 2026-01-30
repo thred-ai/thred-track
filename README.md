@@ -18,19 +18,19 @@ A modern TypeScript SDK for browser tracking and lead enrichment from ChatGPT re
 ### NPM
 
 ```bash
-npm install thredjs
+npm install thred-track
 ```
 
 ### Yarn
 
 ```bash
-yarn add thredjs
+yarn add thred-track
 ```
 
 ### CDN (Script Tag)
 
 ```html
-<script src="https://unpkg.com/thredjs/dist/thred.umd.js?browserKey=YOUR_KEY"></script>
+<script src="https://unpkg.com/thred-track/dist/thred.umd.js?browserKey=YOUR_KEY"></script>
 ```
 
 ## Quick Start
@@ -52,7 +52,7 @@ The SDK will automatically:
 ### Manual Initialization (Module)
 
 ```typescript
-import { ThredSDK } from 'thredjs';
+import { ThredSDK } from 'thred-track';
 
 const thred = new ThredSDK({
   browserKey: 'your-browser-key',
@@ -161,7 +161,7 @@ thred.destroy();
 ### Programmatic Tracking
 
 ```typescript
-import { ThredSDK } from 'thredjs';
+import { ThredSDK } from 'thred-track';
 
 const thred = new ThredSDK({
   browserKey: 'your-key',
@@ -185,7 +185,7 @@ document.querySelector('#signup-btn').addEventListener('click', async () => {
 
 ```typescript
 import { useEffect, useState } from 'react';
-import { ThredSDK } from 'thredjs';
+import { ThredSDK } from 'thred-track';
 
 function App() {
   const [thred] = useState(() => new ThredSDK({
@@ -236,7 +236,7 @@ npm run format
 ### Project Structure
 
 ```
-thredjs/
+thred-track/
 ├── src/
 │   ├── core/           # Core SDK functionality
 │   │   ├── api.ts      # API client
@@ -251,7 +251,7 @@ thredjs/
 │   └── index.ts        # Main entry point
 ├── examples/           # Usage examples
 ├── dist/               # Build output
-├── thred.js           # Original implementation (reference)
+├── thred-track.js           # Original implementation (reference)
 └── package.json
 ```
 
@@ -333,7 +333,7 @@ import type {
   LeadData,
   PageViewPayload,
   EnrichPayload,
-} from 'thredjs';
+} from 'thred-track';
 ```
 
 ## License

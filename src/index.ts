@@ -54,12 +54,6 @@ export class ThredSDK implements IThredSDK {
 
     this.logger.log('Initializing Thred SDK...');
 
-    // Check if from ChatGPT
-    if (!this.isFromChatGPT()) {
-      this.logger.log('Not from ChatGPT - skipping initialization');
-      return;
-    }
-
     // Generate fingerprint
     await this.fingerprint.getFingerprint();
 

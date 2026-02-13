@@ -31,6 +31,11 @@ export class Tracker {
       return;
     }
 
+    if (!this.config.fromChat) {
+      this.logger.log('Not from ChatGPT - exiting');
+      return;
+    }
+
     // Track page view
     await this.trackPageView();
 
@@ -86,7 +91,7 @@ export class Tracker {
       name,
       email,
       company: company,
-      discovery: true,
+      discovery: false,
     });
   }
 

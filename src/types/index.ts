@@ -4,6 +4,7 @@
 
 export interface ThredConfig {
   enabled: boolean;
+  fromChat: boolean;
   type: "hosted" | "custom",
   hostedUrlBase?: string;
   formId?: string;

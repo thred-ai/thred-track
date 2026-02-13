@@ -24,6 +24,7 @@ export class Tracker {
    * Initialize tracker with config
    */
   async init(): Promise<void> {
+    // Get fingerprint
     const fingerprint = await this.fingerprint.getFingerprint();
     if (!fingerprint) {
       this.logger.warn('Cannot initialize tracker without fingerprint');

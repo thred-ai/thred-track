@@ -296,7 +296,7 @@ The SDK fetches configuration from your Thred API:
   "emailId": "email",
   "nameId": "name",
   "companyId": "company",
-  "fromChat": true
+  "hasChatSession": true
 }
 ```
 

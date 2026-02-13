@@ -139,35 +139,45 @@ export class Tracker {
         return;
       }
 
-      // Attach UTM parameter to links containing hostedUrlBase
-      document.addEventListener('click', async (e) => {
+      // Inject utm_fp into all existing matching links
+      this.injectFingerprintIntoLinks(document.body, hostedUrlBase);
+
+      // Watch for dynamically added links and inject utm_fp as they appear
+      this.formObserver = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          for (const node of Array.from(mutation.addedNodes)) {
+            if (!(node instanceof HTMLElement)) continue;
+
+            // Check if the added node itself is a matching link
+            if (node.tagName === 'A') {
+              this.injectFingerprintIntoLink(node as HTMLAnchorElement, hostedUrlBase);
+            }
+
+            // Check any child links within the added node
+            this.injectFingerprintIntoLinks(node, hostedUrlBase);
+          }
+        }
+      });
+
+      this.formObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+      });
+
+      // Fallback: intercept clicks for links that may have had their href changed dynamically
+      document.addEventListener('click', (e) => {
         const target = (e.target as HTMLElement).closest('a');
         if (!target) return;
 
         const href = target.getAttribute('href');
-        if (!href || !href.includes(hostedUrlBase!)) return;
+        if (!href || !href.includes(hostedUrlBase)) return;
 
-        // Get fingerprint
-        const fp = await this.fingerprint.getFingerprint();
-        if (!fp) {
-          this.logger.warn('Cannot add UTM parameter - no fingerprint');
-          return;
-        }
+        // Already tagged — skip
+        if (href.includes('utm_fp=')) return;
 
-        // Parse URL and add utm_fp parameter
-        try {
-          const url = new URL(href, window.location.origin);
-          url.searchParams.set('utm_fp', fp);
-          
-          // Update the href with the new URL
-          target.setAttribute('href', url.toString());
-          
-          this.logger.log('Added utm_fp to link:', url.toString());
-        } catch (err) {
-          this.logger.warn('Failed to parse URL:', href, err);
-        }
+        this.injectFingerprintIntoLink(target as HTMLAnchorElement, hostedUrlBase);
       }, { capture: true });
-      
+
       return;
     }
     else if (this.config.type === 'custom') {
@@ -215,6 +225,42 @@ export class Tracker {
         childList: true,
         subtree: true,
       });
+    }
+  }
+
+  /**
+   * Inject utm_fp into all matching links within a root element
+   */
+  private injectFingerprintIntoLinks(root: HTMLElement, hostedUrlBase: string): void {
+    const links = root.querySelectorAll<HTMLAnchorElement>('a[href]');
+    for (const link of Array.from(links)) {
+      this.injectFingerprintIntoLink(link, hostedUrlBase);
+    }
+  }
+
+  /**
+   * Inject utm_fp into a single link if it matches hostedUrlBase
+   */
+  private injectFingerprintIntoLink(link: HTMLAnchorElement, hostedUrlBase: string): void {
+    const href = link.getAttribute('href');
+    if (!href || !href.includes(hostedUrlBase)) return;
+
+    // Already tagged — skip
+    if (href.includes('utm_fp=')) return;
+
+    const fp = this.fingerprint.getCachedFingerprint();
+    if (!fp) {
+      this.logger.warn('Cannot inject utm_fp - no cached fingerprint');
+      return;
+    }
+
+    try {
+      const url = new URL(href, window.location.origin);
+      url.searchParams.set('utm_fp', fp);
+      link.setAttribute('href', url.toString());
+      this.logger.log('Injected utm_fp into link:', url.toString());
+    } catch (err) {
+      this.logger.warn('Failed to parse URL:', href, err);
     }
   }
 

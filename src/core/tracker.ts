@@ -1,5 +1,6 @@
 import type { ThredConfig, LeadData } from '../types';
 import { Logger } from '../utils/logger';
+import { isFromChatGPT } from '../utils/detector';
 import { ThredAPI } from './api';
 import { FingerprintManager } from './fingerprint';
 
@@ -37,13 +38,17 @@ export class Tracker {
       return;
     }
 
-    if (!this.config.fromChat) {
-      this.logger.log('Not from ChatGPT - exiting');
+    if (!this.config.hasChatSession) {
+      this.logger.log('No chat session for this fingerprint - exiting');
       return;
     }
 
-    // Track page view
-    await this.trackPageView();
+    // Only track page view if UTM is from ChatGPT
+    if (isFromChatGPT()) {
+      await this.trackPageView();
+    } else {
+      this.logger.log('UTM not from ChatGPT - skipping page view');
+    }
 
     // Setup form tracking
     this.setupFormTracking();

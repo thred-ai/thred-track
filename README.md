@@ -295,7 +295,8 @@ The SDK fetches configuration from your Thred API:
   "formId": "form",
   "emailId": "email",
   "nameId": "name",
-  "companyId": "company"
+  "companyId": "company",
+  "fromChat": true
 }
 ```
 

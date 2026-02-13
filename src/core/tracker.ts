@@ -24,7 +24,12 @@ export class Tracker {
    * Initialize tracker with config
    */
   async init(): Promise<void> {
-    this.config = await this.api.fetchConfig();
+    let fingerprint = await this.fingerprint.getFingerprint();
+    if (!fingerprint) {
+      this.logger.warn('Cannot initialize tracker without fingerprint');
+      return;
+    }
+    this.config = await this.api.fetchConfig(fingerprint);
 
     if (!this.config?.enabled) {
       this.logger.log('Tracking disabled by config');

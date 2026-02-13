@@ -19,9 +19,9 @@ export class ThredAPI {
   /**
    * Fetch configuration from API
    */
-  async fetchConfig(): Promise<ThredConfig | null> {
+  async fetchConfig(fingerprint: string): Promise<ThredConfig | null> {
     try {
-      const url = `${this.baseUrl}/config?browserKey=${encodeURIComponent(this.browserKey)}`;
+      const url = `${this.baseUrl}/config?fingerprint=${encodeURIComponent(fingerprint)}&browserKey=${encodeURIComponent(this.browserKey)}`;
       this.logger.log('Fetching config from:', url);
 
       const response = await fetch(url, {

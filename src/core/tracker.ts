@@ -38,7 +38,7 @@ export class Tracker {
       return;
     }
 
-    if (!this.config.hasChatSession) {
+    if (!this.config.hasChatSession && !isFromChatGPT()) {
       this.logger.log('No chat session for this fingerprint - exiting');
       return;
     }

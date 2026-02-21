@@ -10,6 +10,10 @@ export class Tracker {
   private logger: Logger;
   private config: ThredConfig | null = null;
   private formObserver: MutationObserver | null = null;
+  private lastTrackedUrl: string | null = null;
+  private popstateHandler: (() => void) | null = null;
+  private originalPushState: typeof history.pushState | null = null;
+  private originalReplaceState: typeof history.replaceState | null = null;
 
   constructor(
     api: ThredAPI,
@@ -43,12 +47,15 @@ export class Tracker {
       return;
     }
 
-    // Only track page view if UTM is from ChatGPT
+    // Track initial page view
     if (isFromChatGPT()) {
       await this.trackPageView();
     } else {
       this.logger.log('UTM not from ChatGPT - skipping page view');
     }
+
+    // Track SPA route changes
+    this.setupRouteTracking();
 
     // Setup form tracking
     this.setupFormTracking();
@@ -121,6 +128,40 @@ export class Tracker {
       fingerprint: fp,
       leadData,
     });
+  }
+
+  /**
+   * Track page views on SPA route changes by patching pushState/replaceState
+   * and listening for popstate.
+   */
+  private setupRouteTracking(): void {
+    if (typeof window === 'undefined') return;
+
+    this.lastTrackedUrl = window.location.href;
+
+    const onRouteChange = () => {
+      const currentUrl = window.location.href;
+      if (currentUrl === this.lastTrackedUrl) return;
+      this.lastTrackedUrl = currentUrl;
+      this.logger.log('Route change detected:', currentUrl);
+      this.trackPageView();
+    };
+
+    this.popstateHandler = onRouteChange;
+    window.addEventListener('popstate', this.popstateHandler);
+
+    this.originalPushState = history.pushState.bind(history);
+    this.originalReplaceState = history.replaceState.bind(history);
+
+    history.pushState = (...args: Parameters<typeof history.pushState>) => {
+      this.originalPushState!(...args);
+      onRouteChange();
+    };
+
+    history.replaceState = (...args: Parameters<typeof history.replaceState>) => {
+      this.originalReplaceState!(...args);
+      onRouteChange();
+    };
   }
 
   /**
@@ -271,6 +312,21 @@ export class Tracker {
     if (this.formObserver) {
       this.formObserver.disconnect();
       this.formObserver = null;
+    }
+
+    if (this.popstateHandler) {
+      window.removeEventListener('popstate', this.popstateHandler);
+      this.popstateHandler = null;
+    }
+
+    if (this.originalPushState) {
+      history.pushState = this.originalPushState;
+      this.originalPushState = null;
+    }
+
+    if (this.originalReplaceState) {
+      history.replaceState = this.originalReplaceState;
+      this.originalReplaceState = null;
     }
   }
 }

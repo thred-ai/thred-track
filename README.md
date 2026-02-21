@@ -30,7 +30,7 @@ yarn add thred-track
 ### CDN (Script Tag)
 
 ```html
-<script src="https://cdn.thred.dev/thred-track/thred-track.js?browserKey=YOUR_KEY"></script>
+<script src="https://cdn.thred.dev/thred-track.js?browserKey=YOUR_KEY"></script>
 ```
 
 ## Quick Start

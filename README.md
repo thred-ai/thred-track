@@ -4,14 +4,14 @@ A modern TypeScript SDK for browser tracking and lead enrichment from ChatGPT re
 
 ## Features
 
-- 🎯 **ChatGPT Detection** - Automatic detection of visitors from ChatGPT
-- 🔒 **Browser Fingerprinting** - Privacy-friendly visitor identification
-- 📊 **Page View Tracking** - Anonymous page view analytics
-- 📝 **Form Tracking** - Automatic form submission tracking
-- 💼 **Lead Enrichment** - Capture and enrich lead data
-- 🚀 **Zero Dependencies** - Lightweight with no external dependencies
-- 📦 **Multiple Formats** - UMD, CommonJS, and ES modules
-- 🔧 **TypeScript Support** - Full TypeScript definitions included
+- **ChatGPT Detection** - Automatic detection of visitors from ChatGPT
+- **Browser Fingerprinting** - Privacy-friendly visitor identification
+- **Page View Tracking** - Automatic page view analytics
+- **Form Tracking** - Automatic form submission tracking
+- **Lead Enrichment** - Capture and enrich lead data
+- **Zero Dependencies** - Lightweight with no external dependencies
+- **Multiple Formats** - UMD, CommonJS, and ES modules
+- **TypeScript Support** - Full TypeScript definitions included
 
 ## Installation
 
@@ -30,122 +30,58 @@ yarn add thred-track
 ### CDN (Script Tag)
 
 ```html
-<script src="https://unpkg.com/thred-track/dist/thred-track.umd.js?browserKey=YOUR_KEY"></script>
+<script src="https://cdn.thred.dev/thred-track/thred-track.js?browserKey=YOUR_KEY"></script>
 ```
 
 ## Quick Start
 
-### Auto-Initialize (Script Tag)
+### Script Tag
 
-Add the script with your browser key, and it will auto-initialize:
+Drop the script onto your page with your browser key. That's it — everything is automatic:
 
 ```html
-<script src="./dist/thred-track.umd.js?browserKey=751fe47a-d4f5-496a-ba9c-fb298c281e8a"></script>
+<script src="https://cdn.thred.dev/thred-track.js?browserKey=YOUR_KEY"></script>
 ```
 
-The SDK will automatically:
-- Detect ChatGPT referrals
-- Generate browser fingerprint
-- Track page views
-- Monitor form submissions
-
-### Manual Initialization (Module)
+### Module Import
 
 ```typescript
 import { ThredSDK } from 'thred-track';
 
-const thred = new ThredSDK({
-  browserKey: 'your-browser-key',
-  debug: true,
-  autoInit: false, // Control initialization
-});
-
-// Initialize manually
-await thred.init();
+new ThredSDK({ browserKey: 'YOUR_KEY' });
 ```
 
-## API Reference
+No additional setup required. The SDK automatically:
 
-### Constructor Options
+1. Detects ChatGPT referrals via UTM parameters
+2. Generates a browser fingerprint
+3. Tracks page views for ChatGPT visitors
+4. Monitors and captures form submissions based on your API config
+
+## What Happens on Initialization
+
+When the SDK initializes, it follows the same flow as the original script:
+
+1. **Fetches config** from the Thred API using your `browserKey`
+2. **Checks eligibility** — tracking only runs if the config says `enabled: true` and the visitor has a ChatGPT session or arrived via ChatGPT UTM
+3. **Tracks the page view** automatically for ChatGPT visitors
+4. **Sets up form tracking** — either injecting fingerprints into hosted form links, or attaching submit listeners to your form (based on config `type`)
+
+All of this happens without any manual method calls.
+
+## Constructor Options
 
 ```typescript
 interface ThredOptions {
   browserKey: string;      // Required: Your Thred browser key
-  baseUrl?: string;        // Optional: API base URL (default: https://api.thred.dev/v1)
   debug?: boolean;         // Optional: Enable debug logging (default: false)
   autoInit?: boolean;      // Optional: Auto-initialize on construction (default: true)
 }
 ```
 
-### Methods
-
-#### `init(): Promise<void>`
-
-Initialize the SDK manually (only needed if `autoInit: false`).
-
-```typescript
-await thred.init();
-```
-
-#### `trackPageView(): Promise<void>`
-
-Manually track a page view event.
-
-```typescript
-await thred.trackPageView();
-```
-
-#### `identify(leadData: LeadData): Promise<void>`
-
-Identify a user and enrich lead data.
-
-```typescript
-await thred.identify({
-  name: 'John Doe',
-  email: 'john@example.com',
-  company: 'Acme Inc',
-});
-```
-
-#### `trackFormSubmit(formData: FormData): Promise<void>`
-
-Manually track a form submission.
-
-```typescript
-const form = document.getElementById('myForm');
-const formData = new FormData(form);
-await thred.trackFormSubmit(formData);
-```
-
-#### `getFingerprint(): string | null`
-
-Get the current browser fingerprint (synchronous).
-
-```typescript
-const fingerprint = thred.getFingerprint();
-```
-
-#### `isFromChatGPT(): boolean`
-
-Check if the visitor came from ChatGPT.
-
-```typescript
-if (thred.isFromChatGPT()) {
-  console.log('Visitor from ChatGPT!');
-}
-```
-
-#### `destroy(): void`
-
-Clean up the SDK instance and remove event listeners.
-
-```typescript
-thred.destroy();
-```
-
 ## Usage Examples
 
-### Basic Form Tracking
+### Basic HTML Page
 
 ```html
 <form id="form">
@@ -155,58 +91,94 @@ thred.destroy();
   <button type="submit">Submit</button>
 </form>
 
-<script src="./dist/thred-track.umd.js?browserKey=YOUR_KEY"></script>
+<script src="https://unpkg.com/thred-track/dist/thred-track.umd.js?browserKey=YOUR_KEY"></script>
 ```
 
-### Programmatic Tracking
+The SDK automatically picks up the form and tracks submissions — no extra JavaScript needed.
+
+### React
+
+```typescript
+import { useEffect, useRef } from 'react';
+import { ThredSDK } from 'thred-track';
+
+function App() {
+  const thredRef = useRef<ThredSDK | null>(null);
+
+  useEffect(() => {
+    thredRef.current = new ThredSDK({
+      browserKey: process.env.REACT_APP_THRED_KEY!,
+      debug: process.env.NODE_ENV === 'development',
+    });
+
+    return () => thredRef.current?.destroy();
+  }, []);
+
+  return <YourApp />;
+}
+```
+
+### Next.js
+
+```typescript
+'use client';
+
+import { useEffect, useRef } from 'react';
+import { ThredSDK } from 'thred-track';
+
+export function ThredProvider({ children }: { children: React.ReactNode }) {
+  const thredRef = useRef<ThredSDK | null>(null);
+
+  useEffect(() => {
+    thredRef.current = new ThredSDK({
+      browserKey: process.env.NEXT_PUBLIC_THRED_KEY!,
+    });
+
+    return () => thredRef.current?.destroy();
+  }, []);
+
+  return <>{children}</>;
+}
+```
+
+### Delayed Initialization
+
+If you need to control when tracking starts (e.g., after user consent):
 
 ```typescript
 import { ThredSDK } from 'thred-track';
 
 const thred = new ThredSDK({
-  browserKey: 'your-key',
-  debug: true,
+  browserKey: 'YOUR_KEY',
+  autoInit: false,
 });
 
-// Track custom events
-await thred.trackPageView();
+// Later, when ready:
+await thred.init();
+```
 
-// Identify users manually
-document.querySelector('#signup-btn').addEventListener('click', async () => {
-  await thred.identify({
-    name: userName,
-    email: userEmail,
-    company: userCompany,
-  });
+## Advanced API
+
+These methods are available for advanced use cases but are **not required** for typical usage — the SDK handles everything automatically.
+
+#### `identify(leadData: LeadData): Promise<void>`
+
+Manually identify a user outside of automatic form tracking (e.g., after OAuth or a custom flow):
+
+```typescript
+await thred.identify({
+  name: 'John Doe',
+  email: 'john@example.com',
+  company: 'Acme Inc',
 });
 ```
 
-### React Integration
+#### `destroy(): void`
+
+Clean up the SDK instance and remove event listeners. Use this when unmounting in SPAs:
 
 ```typescript
-import { useEffect, useState } from 'react';
-import { ThredSDK } from 'thred-track';
-
-function App() {
-  const [thred] = useState(() => new ThredSDK({
-    browserKey: process.env.REACT_APP_THRED_KEY,
-    debug: process.env.NODE_ENV === 'development',
-  }));
-
-  useEffect(() => {
-    return () => thred.destroy();
-  }, [thred]);
-
-  const handleSubmit = async (formData) => {
-    await thred.identify({
-      name: formData.name,
-      email: formData.email,
-      company: formData.company,
-    });
-  };
-
-  return <YourApp onSubmit={handleSubmit} />;
-}
+thred.destroy();
 ```
 
 ## Development
@@ -214,22 +186,11 @@ function App() {
 ### Setup
 
 ```bash
-# Install dependencies
 npm install
-
-# Build the SDK
 npm run build
-
-# Run in watch mode
-npm run dev
-
-# Run tests
+npm run dev       # Watch mode
 npm test
-
-# Lint code
 npm run lint
-
-# Format code
 npm run format
 ```
 
@@ -238,20 +199,18 @@ npm run format
 ```
 thred-track/
 ├── src/
-│   ├── core/           # Core SDK functionality
-│   │   ├── api.ts      # API client
-│   │   ├── fingerprint.ts  # Fingerprint management
-│   │   └── tracker.ts  # Event tracking
-│   ├── utils/          # Utility functions
-│   │   ├── detector.ts # ChatGPT detection
-│   │   └── logger.ts   # Logging utility
-│   ├── types/          # TypeScript definitions
+│   ├── core/              # Core SDK functionality
+│   │   ├── api.ts         # API client
+│   │   ├── fingerprint.ts # Fingerprint management
+│   │   └── tracker.ts     # Event tracking
+│   ├── utils/             # Utility functions
+│   │   ├── detector.ts    # ChatGPT detection
+│   │   └── logger.ts      # Logging utility
+│   ├── types/             # TypeScript definitions
 │   │   └── index.ts
-│   ├── __tests__/      # Test files
-│   └── index.ts        # Main entry point
-├── examples/           # Usage examples
-├── dist/               # Build output
-├── thred-track.js           # Original implementation (reference)
+│   ├── __tests__/         # Test files
+│   └── index.ts           # Main entry point
+├── dist/                  # Build output
 └── package.json
 ```
 
@@ -259,25 +218,19 @@ thred-track/
 
 The SDK builds to multiple formats:
 
-- **UMD** (`dist/thred-track.umd.js`) - For script tags
-- **CommonJS** (`dist/index.js`) - For Node.js
-- **ES Module** (`dist/index.esm.js`) - For bundlers
-- **TypeScript** (`dist/index.d.ts`) - Type definitions
+- **UMD** (`dist/thred-track.umd.js`) — For script tags
+- **CommonJS** (`dist/index.js`) — For Node.js / bundlers
+- **ES Module** (`dist/index.esm.js`) — For modern bundlers
+- **TypeScript** (`dist/index.d.ts`) — Type definitions
 
 ### Testing
 
-Run the test suite:
-
 ```bash
 npm test
-
-# Watch mode
 npm run test:watch
 ```
 
 ### Local Testing
-
-Serve examples locally:
 
 ```bash
 npm run serve
@@ -287,11 +240,12 @@ Then open http://localhost:8080/basic.html?utm_source=chatgpt
 
 ## Configuration
 
-The SDK fetches configuration from your Thred API:
+The SDK fetches configuration from your Thred API automatically on init:
 
 ```json
 {
   "enabled": true,
+  "type": "custom",
   "formId": "form",
   "emailId": "email",
   "nameId": "name",
@@ -299,6 +253,8 @@ The SDK fetches configuration from your Thred API:
   "hasChatSession": true
 }
 ```
+
+This config controls which form to track, which fields to extract, and whether the visitor has an existing ChatGPT session.
 
 ## Privacy & Security
 
@@ -340,10 +296,6 @@ import type {
 ## License
 
 MIT
-
-## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request.
 
 ## Support
 

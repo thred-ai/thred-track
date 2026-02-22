@@ -26,6 +26,20 @@ export class Tracker {
   }
 
   /**
+   * Resolves when the DOM is interactive (document.body exists).
+   * Safe to call whether the script is in <head> or <body>.
+   */
+  private domReady(): Promise<void> {
+    return new Promise((resolve) => {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => resolve(), { once: true });
+      } else {
+        resolve();
+      }
+    });
+  }
+
+  /**
    * Initialize tracker with config
    */
   async init(): Promise<void> {
@@ -54,8 +68,11 @@ export class Tracker {
       this.logger.log('UTM not from ChatGPT - skipping page view');
     }
 
-    // Track SPA route changes
+    // Track SPA route changes (only needs window/history — safe before DOM ready)
     this.setupRouteTracking();
+
+    // Wait for document.body to exist before touching the DOM
+    await this.domReady();
 
     // Setup form tracking
     this.setupFormTracking();

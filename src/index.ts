@@ -111,13 +111,23 @@ export class ThredSDK implements IThredSDK {
 }
 
 /**
- * Auto-initialize if loaded as script tag with browserKey
+ * Auto-initialize if loaded as script tag with browserKey.
+ * Defers execution until the DOM is parsed so the script works
+ * identically whether placed in <head> or <body>, with or without `defer`.
  */
 if (typeof window !== 'undefined') {
-  const browserKey = getBrowserKeyFromScript();
-  if (browserKey) {
-    const sdk = new ThredSDK({ browserKey });
-    (window as any).Thred = sdk;
+  const bootstrap = () => {
+    const browserKey = getBrowserKeyFromScript();
+    if (browserKey) {
+      const sdk = new ThredSDK({ browserKey });
+      (window as any).Thred = sdk;
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootstrap, { once: true });
+  } else {
+    bootstrap();
   }
 }
 

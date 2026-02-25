@@ -47,6 +47,11 @@ export class ThredSDK implements IThredSDK {
    * Initialize the SDK
    */
   async init(): Promise<void> {
+    if (typeof window === 'undefined') {
+      this.logger.warn('SDK requires a browser environment — skipping init');
+      return;
+    }
+
     if (this.initialized) {
       this.logger.warn('SDK already initialized');
       return;

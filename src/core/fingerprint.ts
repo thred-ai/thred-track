@@ -46,6 +46,11 @@ export class FingerprintManager {
   }
 
   private async generateFingerprint(): Promise<string | null> {
+    if (typeof window === 'undefined') {
+      this.logger.warn('FingerprintJS requires a browser — skipping');
+      return null;
+    }
+
     try {
       this.logger.log('Loading FingerprintJS...');
 

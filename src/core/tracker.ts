@@ -65,6 +65,8 @@ export class Tracker {
    * Track page view event
    */
   async trackPageView(): Promise<void> {
+    if (typeof window === 'undefined') return;
+
     const fp = await this.fingerprint.getFingerprint();
 
     if (!fp) {
@@ -313,6 +315,8 @@ export class Tracker {
       this.formObserver.disconnect();
       this.formObserver = null;
     }
+
+    if (typeof window === 'undefined') return;
 
     if (this.popstateHandler) {
       window.removeEventListener('popstate', this.popstateHandler);

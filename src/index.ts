@@ -24,7 +24,7 @@ export class ThredSDK implements IThredSDK {
   constructor(options: ThredOptions) {
     this.options = {
       baseUrl: DEFAULT_BASE_URL,
-      debug: true,
+      debug: false,
       autoInit: true,
       ...options,
     };

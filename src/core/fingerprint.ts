@@ -6,6 +6,8 @@ const FP_PROXY_URL =
 const FP_PROXY_ENDPOINT =
   'https://thredproxy.com/35ZCuyzokuT1YGd8/qbWl4nqUSCIDTor4';
 
+const STORAGE_KEY = 'thred_fingerprint';
+
 export class FingerprintManager {
   private fingerprint: string | null = null;
   private logger: Logger;
@@ -19,28 +21,23 @@ export class FingerprintManager {
    * Get or generate fingerprint
    */
   async getFingerprint(): Promise<string | null> {
-    // Return cached fingerprint
     if (this.fingerprint) {
       this.logger.log('Using cached fingerprint:', this.fingerprint);
       return this.fingerprint;
     }
 
-    // Return existing promise if already loading
     if (this.promise) {
       return this.promise;
     }
 
-    // Check global window cache
-    if (
-      typeof window !== 'undefined' &&
-      (window as any).thredFingerprint
-    ) {
-      this.fingerprint = (window as any).thredFingerprint;
-      this.logger.log('Using global fingerprint:', this.fingerprint);
+    // Check localStorage (persists across tabs)
+    const stored = this.readStorage();
+    if (stored) {
+      this.fingerprint = stored;
+      this.logger.log('Using stored fingerprint:', this.fingerprint);
       return this.fingerprint;
     }
 
-    // Generate new fingerprint
     this.promise = this.generateFingerprint();
     return this.promise;
   }
@@ -62,10 +59,7 @@ export class FingerprintManager {
       const result: FingerprintResult = await fp.get();
       this.fingerprint = result.visitorId;
 
-      // Cache globally
-      if (typeof window !== 'undefined') {
-        (window as any).thredFingerprint = this.fingerprint;
-      }
+      this.writeStorage(this.fingerprint);
 
       this.logger.log('Fingerprint generated:', this.fingerprint);
       return this.fingerprint;
@@ -75,21 +69,43 @@ export class FingerprintManager {
     }
   }
 
-  /**
-   * Get cached fingerprint (synchronous)
-   */
   getCachedFingerprint(): string | null {
     return this.fingerprint;
   }
 
-  /**
-   * Clear fingerprint cache
-   */
   clear() {
     this.fingerprint = null;
     this.promise = null;
-    if (typeof window !== 'undefined') {
-      delete (window as any).thredFingerprint;
+    this.removeStorage();
+  }
+
+  private readStorage(): string | null {
+    try {
+      return typeof window !== 'undefined'
+        ? localStorage.getItem(STORAGE_KEY)
+        : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private writeStorage(value: string) {
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY, value);
+      }
+    } catch {
+      this.logger.warn('Failed to persist fingerprint to localStorage');
+    }
+  }
+
+  private removeStorage() {
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    } catch {
+      // Ignore storage errors on cleanup
     }
   }
 }

@@ -53,6 +53,7 @@ export interface ThredSDK {
   getFingerprint(): string | null;
   isFromChatGPT(): boolean;
   isFromGemini(): boolean;
+  isFromPerplexity(): boolean;
   isFromAI(): boolean;
   destroy(): void;
 }

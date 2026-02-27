@@ -39,13 +39,31 @@ export function isFromGemini(): boolean {
 }
 
 /**
- * Detects if the visitor came from any supported AI source (ChatGPT or Gemini)
+ * Detects if the visitor came from Perplexity AI
  */
-export function isFromAI(): boolean {
-  return isFromChatGPT() || isFromGemini();
+export function isFromPerplexity(): boolean {
+  if (typeof window === 'undefined') return false;
+
+  const params = new URLSearchParams(window.location.search);
+  const utmSource = params.get('utm_source')?.toLowerCase() || '';
+  const referrer = document.referrer.toLowerCase();
+
+  const isPerplexityRef = referrer.includes('perplexity.ai');
+  const isPerplexityUtm =
+    utmSource === 'perplexity' ||
+    utmSource.includes('perplexity');
+
+  return isPerplexityRef || isPerplexityUtm;
 }
 
-export type AISource = 'chatgpt' | 'gemini';
+/**
+ * Detects if the visitor came from any supported AI source
+ */
+export function isFromAI(): boolean {
+  return isFromChatGPT() || isFromGemini() || isFromPerplexity();
+}
+
+export type AISource = 'chatgpt' | 'gemini' | 'perplexity';
 
 /**
  * Returns the detected AI source, or null if the visitor didn't come from a known AI
@@ -53,6 +71,7 @@ export type AISource = 'chatgpt' | 'gemini';
 export function getAISource(): AISource | null {
   if (isFromChatGPT()) return 'chatgpt';
   if (isFromGemini()) return 'gemini';
+  if (isFromPerplexity()) return 'perplexity';
   return null;
 }
 

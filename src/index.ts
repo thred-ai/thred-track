@@ -4,7 +4,7 @@
 
 import type { ThredOptions, ThredSDK as IThredSDK, LeadData } from './types';
 import { Logger } from './utils/logger';
-import { isFromChatGPT, isFromGemini, isFromAI, getBrowserKeyFromScript } from './utils/detector';
+import { isFromChatGPT, isFromGemini, isFromPerplexity, isFromAI, getBrowserKeyFromScript } from './utils/detector';
 import { FingerprintManager } from './core/fingerprint';
 import { ThredAPI } from './core/api';
 import { Tracker } from './core/tracker';
@@ -81,6 +81,13 @@ export class ThredSDK implements IThredSDK {
    */
   isFromGemini(): boolean {
     return isFromGemini();
+  }
+
+  /**
+   * Check if visitor is from Perplexity AI
+   */
+  isFromPerplexity(): boolean {
+    return isFromPerplexity();
   }
 
   /**

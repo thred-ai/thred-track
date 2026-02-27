@@ -40,33 +40,49 @@ export function isFromGemini(): boolean {
 
 /**
  * Detects if the visitor came from Perplexity AI
- * NOTE: Currently disabled — kept for future use
  */
 export function isFromPerplexity(): boolean {
-  return false;
+  if (typeof window === 'undefined') return false;
 
-  // if (typeof window === 'undefined') return false;
-  //
-  // const params = new URLSearchParams(window.location.search);
-  // const utmSource = params.get('utm_source')?.toLowerCase() || '';
-  // const referrer = document.referrer.toLowerCase();
-  //
-  // const isPerplexityRef = referrer.includes('perplexity.ai');
-  // const isPerplexityUtm =
-  //   utmSource === 'perplexity' ||
-  //   utmSource.includes('perplexity');
-  //
-  // return isPerplexityRef || isPerplexityUtm;
+  const params = new URLSearchParams(window.location.search);
+  const utmSource = params.get('utm_source')?.toLowerCase() || '';
+  const referrer = document.referrer.toLowerCase();
+
+  const isPerplexityRef = referrer.includes('perplexity.ai');
+  const isPerplexityUtm =
+    utmSource === 'perplexity' ||
+    utmSource.includes('perplexity');
+
+  return isPerplexityRef || isPerplexityUtm;
+}
+
+/**
+ * Detects if the visitor came from Anthropic Claude
+ */
+export function isFromClaude(): boolean {
+  if (typeof window === 'undefined') return false;
+
+  const params = new URLSearchParams(window.location.search);
+  const utmSource = params.get('utm_source')?.toLowerCase() || '';
+  const referrer = document.referrer.toLowerCase();
+
+  const isClaudeRef = referrer.includes('claude.ai');
+  const isClaudeUtm =
+    utmSource === 'claude' ||
+    utmSource.includes('claude') ||
+    utmSource === 'anthropic';
+
+  return isClaudeRef || isClaudeUtm;
 }
 
 /**
  * Detects if the visitor came from any supported AI source
  */
 export function isFromAI(): boolean {
-  return isFromChatGPT() || isFromGemini() || isFromPerplexity();
+  return isFromChatGPT() || isFromGemini() || isFromPerplexity() || isFromClaude();
 }
 
-export type AISource = 'chatgpt' | 'gemini' | 'pplx';
+export type AISource = 'chatgpt' | 'gemini' | 'pplx' | 'claude';
 
 /**
  * Returns the detected AI source, or null if the visitor didn't come from a known AI
@@ -75,6 +91,7 @@ export function getAISource(): AISource | null {
   if (isFromChatGPT()) return 'chatgpt';
   if (isFromGemini()) return 'gemini';
   if (isFromPerplexity()) return 'pplx';
+  if (isFromClaude()) return 'claude';
   return null;
 }
 

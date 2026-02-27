@@ -54,6 +54,7 @@ export interface ThredSDK {
   isFromChatGPT(): boolean;
   isFromGemini(): boolean;
   isFromPerplexity(): boolean;
+  isFromClaude(): boolean;
   isFromAI(): boolean;
   destroy(): void;
 }

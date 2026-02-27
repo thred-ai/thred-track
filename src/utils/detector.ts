@@ -40,20 +40,23 @@ export function isFromGemini(): boolean {
 
 /**
  * Detects if the visitor came from Perplexity AI
+ * NOTE: Currently disabled — kept for future use
  */
 export function isFromPerplexity(): boolean {
-  if (typeof window === 'undefined') return false;
+  return false;
 
-  const params = new URLSearchParams(window.location.search);
-  const utmSource = params.get('utm_source')?.toLowerCase() || '';
-  const referrer = document.referrer.toLowerCase();
-
-  const isPerplexityRef = referrer.includes('perplexity.ai');
-  const isPerplexityUtm =
-    utmSource === 'perplexity' ||
-    utmSource.includes('perplexity');
-
-  return isPerplexityRef || isPerplexityUtm;
+  // if (typeof window === 'undefined') return false;
+  //
+  // const params = new URLSearchParams(window.location.search);
+  // const utmSource = params.get('utm_source')?.toLowerCase() || '';
+  // const referrer = document.referrer.toLowerCase();
+  //
+  // const isPerplexityRef = referrer.includes('perplexity.ai');
+  // const isPerplexityUtm =
+  //   utmSource === 'perplexity' ||
+  //   utmSource.includes('perplexity');
+  //
+  // return isPerplexityRef || isPerplexityUtm;
 }
 
 /**

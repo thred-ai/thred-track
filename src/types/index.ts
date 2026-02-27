@@ -33,6 +33,7 @@ export interface PageViewPayload {
     url: string;
   };
   fingerprint: string;
+  source?: string;
 }
 
 export interface EnrichPayload {
@@ -51,5 +52,7 @@ export interface ThredSDK {
   identify(leadData: LeadData): Promise<void>;
   getFingerprint(): string | null;
   isFromChatGPT(): boolean;
+  isFromGemini(): boolean;
+  isFromAI(): boolean;
   destroy(): void;
 }

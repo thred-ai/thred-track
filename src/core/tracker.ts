@@ -1,6 +1,6 @@
 import type { ThredConfig, LeadData } from '../types';
 import { Logger } from '../utils/logger';
-import { isFromChatGPT } from '../utils/detector';
+import { isFromAI, getAISource } from '../utils/detector';
 import { ThredAPI } from './api';
 import { FingerprintManager } from './fingerprint';
 
@@ -42,16 +42,16 @@ export class Tracker {
       return;
     }
 
-    if (!this.config.hasChatSession && !isFromChatGPT()) {
+    if (!this.config.hasChatSession && !isFromAI()) {
       this.logger.log('No chat session for this fingerprint - exiting');
       return;
     }
 
     // Track initial page view
-    if (isFromChatGPT()) {
+    if (isFromAI()) {
       await this.trackPageView();
     } else {
-      this.logger.log('UTM not from ChatGPT - skipping page view');
+      this.logger.log('UTM not from AI source - skipping page view');
     }
 
     // Track SPA route changes
@@ -74,12 +74,15 @@ export class Tracker {
       return;
     }
 
+    const source = getAISource();
+
     await this.api.trackPageView({
       event: 'page_view',
       data: {
         url: window.location.href,
       },
       fingerprint: fp,
+      ...(source && { source }),
     });
   }
 

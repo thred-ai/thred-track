@@ -20,6 +20,43 @@ export function isFromChatGPT(): boolean {
 }
 
 /**
+ * Detects if the visitor came from Google Gemini
+ */
+export function isFromGemini(): boolean {
+  if (typeof window === 'undefined') return false;
+
+  const params = new URLSearchParams(window.location.search);
+  const utmSource = params.get('utm_source')?.toLowerCase() || '';
+  const referrer = document.referrer.toLowerCase();
+
+  const isGeminiRef = referrer.includes('gemini.google.com');
+  const isGeminiUtm =
+    utmSource === 'gemini' ||
+    utmSource.includes('gemini') ||
+    utmSource === 'google_gemini';
+
+  return isGeminiRef || isGeminiUtm;
+}
+
+/**
+ * Detects if the visitor came from any supported AI source (ChatGPT or Gemini)
+ */
+export function isFromAI(): boolean {
+  return isFromChatGPT() || isFromGemini();
+}
+
+export type AISource = 'chatgpt' | 'gemini';
+
+/**
+ * Returns the detected AI source, or null if the visitor didn't come from a known AI
+ */
+export function getAISource(): AISource | null {
+  if (isFromChatGPT()) return 'chatgpt';
+  if (isFromGemini()) return 'gemini';
+  return null;
+}
+
+/**
  * Gets the browser key from script tag if present
  */
 export function getBrowserKeyFromScript(): string | null {

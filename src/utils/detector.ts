@@ -63,7 +63,7 @@ export function isFromAI(): boolean {
   return isFromChatGPT() || isFromGemini() || isFromPerplexity();
 }
 
-export type AISource = 'chatgpt' | 'gemini' | 'perplexity';
+export type AISource = 'chatgpt' | 'gemini' | 'pplx';
 
 /**
  * Returns the detected AI source, or null if the visitor didn't come from a known AI
@@ -71,7 +71,7 @@ export type AISource = 'chatgpt' | 'gemini' | 'perplexity';
 export function getAISource(): AISource | null {
   if (isFromChatGPT()) return 'chatgpt';
   if (isFromGemini()) return 'gemini';
-  if (isFromPerplexity()) return 'perplexity';
+  if (isFromPerplexity()) return 'pplx';
   return null;
 }
 

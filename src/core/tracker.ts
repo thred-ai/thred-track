@@ -63,6 +63,11 @@ export class Tracker {
       return;
     }
 
+    if (!this.config?.sessionCode) {
+      this.logger.warn('Cannot track page view without session code');
+      return;
+    }
+
     const source = getAISource();
 
     await this.api.trackPageView({
@@ -72,6 +77,7 @@ export class Tracker {
       },
       fingerprint: fp,
       ...(source && { source }),
+      sessionCode: this.config.sessionCode,
     });
   }
 

@@ -10,6 +10,7 @@ export interface ThredConfig {
   formId?: string;
   emailId?: string;
   nameId?: string;
+  sessionCode?: string;
   companyId?: string;
 }
 
@@ -34,6 +35,7 @@ export interface PageViewPayload {
   };
   fingerprint: string;
   source?: string;
+  sessionCode: string;
 }
 
 export interface EnrichPayload {

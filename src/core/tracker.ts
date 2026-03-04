@@ -42,6 +42,9 @@ export class Tracker {
 
     const aiDetected = isFromAI() && !this.isDuplicateReferrer();
 
+    console.log('aiDetected', aiDetected);
+    console.log('isDuplicateReferrer', this.isDuplicateReferrer());
+
     if (!this.config.hasChatSession && !aiDetected) {
       this.logger.log('No chat session for this fingerprint - exiting');
       return;
@@ -58,6 +61,8 @@ export class Tracker {
   private isDuplicateReferrer(): boolean {
     try {
       const prev = sessionStorage.getItem(REFERRER_SESSION_KEY);
+      console.log('prev', prev);
+      console.log('document.referrer', document.referrer);
       return prev !== null && prev === document.referrer.toLowerCase();
     } catch {
       return false;

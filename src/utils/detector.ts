@@ -118,3 +118,27 @@ export function getBrowserKeyFromScript(): string | null {
 
   return null;
 }
+
+/**
+ * Gets the debug mode from script tag if present
+ */
+export function getDebugModeFromScript(): string | null {
+  if (typeof window === 'undefined' || typeof document === 'undefined') {
+    return null;
+  }
+
+  const scripts = document.getElementsByTagName('script');
+
+  for (const script of Array.from(scripts)) {
+    if (script.src.includes('thred')) {
+      try {
+        const url = new URL(script.src);
+        return url.searchParams.get('debug');
+      } catch {
+        // Invalid URL
+      }
+    }
+  }
+
+  return null;
+}

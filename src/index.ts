@@ -4,7 +4,7 @@
 
 import type { ThredOptions, ThredSDK as IThredSDK, LeadData } from './types';
 import { Logger } from './utils/logger';
-import { isFromChatGPT, isFromGemini, isFromPerplexity, isFromClaude, isFromAI, getBrowserKeyFromScript } from './utils/detector';
+import { isFromChatGPT, isFromGemini, isFromPerplexity, isFromClaude, isFromAI, getBrowserKeyFromScript, getDebugModeFromScript } from './utils/detector';
 import { FingerprintManager } from './core/fingerprint';
 import { ThredAPI } from './core/api';
 import { Tracker } from './core/tracker';
@@ -148,8 +148,9 @@ export class ThredSDK implements IThredSDK {
  */
 if (typeof window !== 'undefined') {
   const browserKey = getBrowserKeyFromScript();
+  const debug = getDebugModeFromScript();
   if (browserKey) {
-    const sdk = new ThredSDK({ browserKey });
+    const sdk = new ThredSDK({ browserKey, debug: debug === 'true' });
     (window as any).Thred = sdk;
   }
 }

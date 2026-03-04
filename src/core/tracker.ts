@@ -14,6 +14,7 @@ export class Tracker {
   private popstateHandler: (() => void) | null = null;
   private originalPushState: typeof history.pushState | null = null;
   private originalReplaceState: typeof history.replaceState | null = null;
+  private isAIVisit = false;
 
   constructor(
     api: ThredAPI,
@@ -47,15 +48,14 @@ export class Tracker {
       return;
     }
 
-    // Track initial page view
-    if (isFromAI()) {
-      await this.trackPageView();
-    } else {
-      this.logger.log('UTM not from AI source - skipping page view');
-    }
+    this.isAIVisit = isFromAI();
 
-    // Track SPA route changes
-    this.setupRouteTracking();
+    if (this.isAIVisit) {
+      await this.trackPageView();
+      this.setupRouteTracking();
+    } else {
+      this.logger.log('Not from AI source - skipping page view tracking');
+    }
 
     // Setup form tracking
     this.setupFormTracking();

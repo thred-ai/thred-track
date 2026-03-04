@@ -76,7 +76,7 @@ export function isFromClaude(): boolean {
 }
 
 /**
- * Detects if the visitor came from any supported AI source
+ * Detects if the visitor came from any supported AI source.
  */
 export function isFromAI(): boolean {
   return isFromChatGPT() || isFromGemini() || isFromPerplexity() || isFromClaude();
@@ -85,7 +85,7 @@ export function isFromAI(): boolean {
 export type AISource = 'chatgpt' | 'gemini' | 'pplx' | 'claude';
 
 /**
- * Returns the detected AI source, or null if the visitor didn't come from a known AI
+ * Returns the detected AI source, or null if the visitor didn't come from a known AI.
  */
 export function getAISource(): AISource | null {
   if (isFromChatGPT()) return 'chatgpt';

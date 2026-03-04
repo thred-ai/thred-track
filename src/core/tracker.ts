@@ -4,6 +4,8 @@ import { isFromAI, getAISource } from '../utils/detector';
 import { ThredAPI } from './api';
 import { FingerprintManager } from './fingerprint';
 
+const REFERRER_SESSION_KEY = 'thred_ai_referrer';
+
 export class Tracker {
   private api: ThredAPI;
   private fingerprint: FingerprintManager;
@@ -38,16 +40,36 @@ export class Tracker {
       return;
     }
 
-    if (!this.config.hasChatSession && !isFromAI()) {
+    const aiDetected = isFromAI() && !this.isDuplicateReferrer();
+
+    if (!this.config.hasChatSession && !aiDetected) {
       this.logger.log('No chat session for this fingerprint - exiting');
       return;
     }
 
-    if (isFromAI()) {
+    if (aiDetected) {
+      this.saveReferrer();
       await this.trackPageView();
     }
 
     this.setupFormTracking();
+  }
+
+  private isDuplicateReferrer(): boolean {
+    try {
+      const prev = sessionStorage.getItem(REFERRER_SESSION_KEY);
+      return prev !== null && prev === document.referrer.toLowerCase();
+    } catch {
+      return false;
+    }
+  }
+
+  private saveReferrer(): void {
+    try {
+      sessionStorage.setItem(REFERRER_SESSION_KEY, document.referrer.toLowerCase());
+    } catch {
+      // sessionStorage unavailable
+    }
   }
 
   /**

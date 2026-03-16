@@ -32,6 +32,7 @@ export interface PageViewPayload {
   event: 'page_view';
   data: {
     url: string;
+    contentString: string;
   };
   fingerprint: string;
   source?: string;

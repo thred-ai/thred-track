@@ -101,6 +101,7 @@ export class Tracker {
       event: 'page_view',
       data: {
         url: window.location.href,
+        contentString: document.body.innerText,
       },
       fingerprint: fp,
       ...(source && { source }),

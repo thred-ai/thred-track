@@ -39,7 +39,7 @@ export class Tracker {
       this.logger.log('Tracking disabled by config');
       return;
     }
-
+//
     const aiDetected = isFromAI() && !this.isDuplicateReferrer();
 
     console.log('aiDetected', aiDetected);

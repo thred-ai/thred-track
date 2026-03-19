@@ -43,6 +43,7 @@ export class Tracker {
     const aiDetected = isFromAI() && !this.isDuplicateReferrer();
 
     console.log('aiDetected', aiDetected);
+    console.log("url", window.location.href);
     console.log('isDuplicateReferrer', this.isDuplicateReferrer());
 
     if (!this.config.hasChatSession && !aiDetected) {

@@ -41,7 +41,7 @@ export class Tracker {
     }
 
     console.log('[Thred] Initialized!');
-//
+
     const aiDetected = isFromAI() && !this.isDuplicateReferrer();
 
     if (!this.config.hasChatSession && !aiDetected) {

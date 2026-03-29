@@ -151,6 +151,7 @@ if (typeof window !== 'undefined') {
   const debug = getDebugModeFromScript();
   if (browserKey) {
     const sdk = new ThredSDK({ browserKey, debug: debug === 'true' });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).Thred = sdk;
   }
 }

@@ -12,6 +12,9 @@ export interface ThredConfig {
   nameId?: string;
   sessionCode?: string;
   companyId?: string;
+  radarProfileId?: string;
+  radarCdn?: string;
+  radarApiEndpoint?: string;
 }
 
 export interface ThredOptions {

@@ -42,6 +42,8 @@ export class Tracker {
 
     console.log('[Thred] Initialized!');
 
+    this.loadRadar(fingerprint);
+
     const aiDetected = isFromAI() && !this.isDuplicateReferrer();
 
     if (!this.config.hasChatSession && !aiDetected) {
@@ -55,6 +57,77 @@ export class Tracker {
     }
 
     this.setupFormTracking();
+  }
+
+  /**
+   * Load Snitcher Radar script for IP-to-company enrichment.
+   * Runs unconditionally (not gated by AI detection) to capture all visits.
+   */
+  private loadRadar(fingerprint: string): void {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    if (!this.config?.radarProfileId || !this.config.radarCdn || !this.config.radarApiEndpoint) {
+      this.logger.log('Radar config not present, skipping');
+      return;
+    }
+
+    try {
+      const radarConfig = {
+        cdn: this.config.radarCdn,
+        apiEndpoint: this.config.radarApiEndpoint,
+        profileId: this.config.radarProfileId,
+        namespace: 'ThredRadar',
+      };
+
+      const ns = radarConfig.namespace;
+      const w = window as any;
+      let radar = w[ns];
+      if ((radar && !Array.isArray(radar)) || (radar && radar.initialized)) {
+        this.logger.log('Radar already initialized');
+        return;
+      }
+
+      radar = w[ns] = [];
+      radar._loaded = true;
+
+      const methods = [
+        'track', 'page', 'identify', 'group', 'alias', 'ready', 'debug',
+        'on', 'off', 'once', 'trackClick', 'trackSubmit', 'trackLink',
+        'trackForm', 'pageview', 'screen', 'reset', 'register',
+        'setAnonymousId', 'addSourceMiddleware', 'addIntegrationMiddleware',
+        'addDestinationMiddleware',
+      ];
+
+      methods.forEach((method) => {
+        radar[method] = function () {
+          const r = w[ns];
+          if (r.initialized) return r[method].apply(r, arguments);
+          const args: any[] = Array.prototype.slice.call(arguments);
+          args.unshift(method);
+          r.push(args);
+          return r;
+        };
+      });
+
+      radar.bootstrap = () => {
+        const script = document.createElement('script');
+        script.async = true;
+        script.type = 'text/javascript';
+        script.id = '__radar__';
+        script.dataset.settings = JSON.stringify(radarConfig);
+        script.src = `https://${radarConfig.cdn}/releases/latest/radar.min.js`;
+        const first = document.scripts[0];
+        if (first?.parentNode) {
+          first.parentNode.insertBefore(script, first);
+        }
+      };
+
+      radar.bootstrap();
+
+      radar.identify(fingerprint);
+      this.logger.log('Radar loaded and identified with fingerprint');
+    } catch (err) {
+      this.logger.warn('Failed to load Radar:', err);
+    }
   }
 
   private isDuplicateReferrer(): boolean {

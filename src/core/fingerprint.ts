@@ -64,9 +64,18 @@ export class FingerprintManager {
       this.logger.log('Fingerprint generated:', this.fingerprint);
       return this.fingerprint;
     } catch (error) {
-      this.logger.warn('Fingerprint generation failed:', error);
-      return null;
+      this.logger.warn('Fingerprint generation failed, using fallback:', error);
+      this.fingerprint = this.generateFallbackFingerprint();
+      this.writeStorage(this.fingerprint);
+      return this.fingerprint;
     }
+  }
+
+  private generateFallbackFingerprint(): string {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const arr = new Uint8Array(20);
+    crypto.getRandomValues(arr);
+    return 'f_' + Array.from(arr, (b) => chars[b % chars.length]).join('');
   }
 
   getCachedFingerprint(): string | null {

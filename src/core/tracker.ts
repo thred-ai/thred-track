@@ -78,6 +78,7 @@ export class Tracker {
         namespace: 'ThredRadar',
       };
 
+      /* eslint-disable @typescript-eslint/no-explicit-any */
       const ns = radarConfig.namespace;
       const w = window as any;
       let radar = w[ns];
@@ -97,16 +98,14 @@ export class Tracker {
         'addDestinationMiddleware',
       ];
 
-      methods.forEach((method) => {
-        radar[method] = function () {
+      for (const method of methods) {
+        radar[method] = (...args: any[]) => {
           const r = w[ns];
-          if (r.initialized) return r[method].apply(r, arguments);
-          const args: any[] = Array.prototype.slice.call(arguments);
-          args.unshift(method);
-          r.push(args);
+          if (r.initialized) return r[method](...args);
+          r.push([method, ...args]);
           return r;
         };
-      });
+      }
 
       radar.bootstrap = () => {
         const script = document.createElement('script');
@@ -124,6 +123,7 @@ export class Tracker {
       radar.bootstrap();
 
       radar.identify(fingerprint);
+      /* eslint-enable @typescript-eslint/no-explicit-any */
       this.logger.log('Radar loaded and identified with fingerprint');
     } catch (err) {
       this.logger.warn('Failed to load Radar:', err);

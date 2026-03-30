@@ -122,7 +122,7 @@ export class Tracker {
 
       radar.bootstrap();
 
-      radar.identify('', { fingerprint });
+      radar.track('thred_identify', { fingerprint });
       /* eslint-enable @typescript-eslint/no-explicit-any */
       this.logger.log('Radar loaded and identified with fingerprint');
     } catch (err) {

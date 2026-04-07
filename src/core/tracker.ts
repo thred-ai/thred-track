@@ -47,6 +47,7 @@ export class Tracker {
     const aiDetected = isFromAI() && !this.isDuplicateReferrer();
 
     if (aiDetected) {
+      // load vector only if ai detected
       this.loadVector(fingerprint);
     }
 

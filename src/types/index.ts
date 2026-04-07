@@ -15,6 +15,8 @@ export interface ThredConfig {
   radarProfileId?: string;
   radarCdn?: string;
   radarApiEndpoint?: string;
+  /** Vector.co pixel browser token; when set, loads https://cdn.vector.co/pixel.js */
+  vectorBrowserToken?: string;
 }
 
 export interface ThredOptions {

@@ -46,6 +46,11 @@ export class Tracker {
 
     const aiDetected = isFromAI() && !this.isDuplicateReferrer();
 
+    if (aiDetected) {
+      // load vector only if ai detected
+      this.loadVector(fingerprint);
+    }
+
     if (!this.config.hasChatSession && !aiDetected) {
       this.logger.log('No chat session for this fingerprint - exiting');
       return;
@@ -127,6 +132,64 @@ export class Tracker {
       this.logger.log('Radar loaded and identified with fingerprint');
     } catch (err) {
       this.logger.warn('Failed to load Radar:', err);
+    }
+  }
+
+  /**
+   * Load Vector.co pixel (https://cdn.vector.co/pixel.js).
+   * Runs when config includes vectorBrowserToken; partnerId is set to the fingerprint.
+   */
+  private loadVector(fingerprint: string): void {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    if (!this.config?.vectorBrowserToken) {
+      this.logger.log('Vector config not present, skipping');
+      return;
+    }
+
+    try {
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      const w = window as any;
+      const d = document;
+      if (w.vector) {
+        this.logger.log('Vector snippet included more than once');
+        return;
+      }
+
+      const t: any = {};
+      t.q = t.q || [];
+      const methodNames = ['load', 'identify', 'on'] as const;
+      const makeStub = (name: string) => {
+        return (...args: unknown[]) => {
+          const slice = Array.prototype.slice.call(args);
+          t.q.push([name, slice]);
+        };
+      };
+      for (let i = 0; i < methodNames.length; i++) {
+        const name = methodNames[i];
+        t[name] = makeStub(name);
+      }
+
+      w.vector = t;
+
+      if (!t.loaded) {
+        const script = d.createElement('script');
+        script.type = 'text/javascript';
+        script.async = true;
+        script.id = '__vector__';
+        script.src = 'https://cdn.vector.co/pixel.js';
+        const first = d.getElementsByTagName('script')[0];
+        if (first?.parentNode) {
+          first.parentNode.insertBefore(script, first);
+        }
+        t.loaded = true;
+      }
+
+      w.vector.partnerId = fingerprint;
+      w.vector.load(this.config.vectorBrowserToken);
+      /* eslint-enable @typescript-eslint/no-explicit-any */
+      this.logger.log('Vector loaded with partnerId (fingerprint)');
+    } catch (err) {
+      this.logger.warn('Failed to load Vector:', err);
     }
   }
 

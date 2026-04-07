@@ -159,6 +159,7 @@ export class Tracker {
     if (first?.parentNode) {
       first.parentNode.insertBefore(script, first);
     }
+    this.logger.log(`Vector token: ${token}`);
     this.logger.log(`Vector script injected with partnerId (${fingerprint})`);
   }
 

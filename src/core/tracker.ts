@@ -150,10 +150,10 @@ export class Tracker {
       /* eslint-disable @typescript-eslint/no-explicit-any */
       const w = window as any;
       const d = document;
-      if (w.vector) {
-        this.logger.log('Vector snippet included more than once');
-        return;
-      }
+      // if (w.vector) {
+      //   this.logger.log('Vector snippet included more than once');
+      //   return;
+      // }
 
       const t: any = {};
       t.q = t.q || [];

@@ -155,10 +155,7 @@ export class Tracker {
       `window.vector.partnerId = "${fingerprint}";`,
       `vector.load("${token}");`,
     ].join('\n');
-    const first = document.getElementsByTagName('script')[0];
-    if (first?.parentNode) {
-      first.parentNode.insertBefore(script, first);
-    }
+    document.body.appendChild(script);
     this.logger.log(`Vector token: ${token}`);
     this.logger.log(`Vector script injected with partnerId (${fingerprint})`);
   }

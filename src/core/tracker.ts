@@ -146,51 +146,20 @@ export class Tracker {
       return;
     }
 
-    try {
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-      const w = window as any;
-      const d = document;
-      if (w.vector) {
-        this.logger.log('Vector snippet included more than once');
-        return;
-      }
-
-      const t: any = {};
-      t.q = t.q || [];
-      const methodNames = ['load', 'identify', 'on'] as const;
-      const makeStub = (name: string) => {
-        return (...args: unknown[]) => {
-          const slice = Array.prototype.slice.call(args);
-          t.q.push([name, slice]);
-        };
-      };
-      for (let i = 0; i < methodNames.length; i++) {
-        const name = methodNames[i];
-        t[name] = makeStub(name);
-      }
-
-      w.vector = t;
-
-      if (!t.loaded) {
-        const script = d.createElement('script');
-        script.type = 'text/javascript';
-        script.async = true;
-        script.id = '__vector__';
-        script.src = 'https://cdn.vector.co/pixel.js';
-        const first = d.getElementsByTagName('script')[0];
-        if (first?.parentNode) {
-          first.parentNode.insertBefore(script, first);
-        }
-        t.loaded = true;
-      }
-
-      w.vector.partnerId = fingerprint;
-      w.vector.load(this.config.vectorBrowserToken);
-      /* eslint-enable @typescript-eslint/no-explicit-any */
-      this.logger.log('Vector loaded with partnerId (fingerprint)');
-    } catch (err) {
-      this.logger.warn('Failed to load Vector:', err);
+    const token = this.config.vectorBrowserToken;
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.id = '__vector__';
+    script.textContent = [
+      '!function(e,r){try{if(e.vector)return void console.log("Vector snippet included more than once.");var t={};t.q=t.q||[];for(var o=["load","identify","on"],n=function(e){return function(){var r=Array.prototype.slice.call(arguments);t.q.push([e,r])}},c=0;c<o.length;c++){var a=o[c];t[a]=n(a)}if(e.vector=t,!t.loaded){var i=r.createElement("script");i.type="text/javascript",i.async=!0,i.src="https://cdn.vector.co/pixel.js";var l=r.getElementsByTagName("script")[0];l.parentNode.insertBefore(i,l),t.loaded=!0}}catch(e){console.error("Error loading Vector:",e)}}(window,document);',
+      `window.vector.partnerId = "${fingerprint}";`,
+      `vector.load("${token}");`,
+    ].join('\n');
+    const first = document.getElementsByTagName('script')[0];
+    if (first?.parentNode) {
+      first.parentNode.insertBefore(script, first);
     }
+    this.logger.log(`Vector script injected with partnerId (${fingerprint})`);
   }
 
   private isDuplicateReferrer(): boolean {

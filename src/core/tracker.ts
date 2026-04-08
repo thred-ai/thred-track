@@ -46,10 +46,10 @@ export class Tracker {
 
     const aiDetected = isFromAI() && !this.isDuplicateReferrer();
 
-    if (aiDetected) {
+    // if (aiDetected) {
       // load vector only if ai detected
       this.loadVector(fingerprint);
-    }
+    // }
 
     if (!this.config.hasChatSession && !aiDetected) {
       this.logger.log('No chat session for this fingerprint - exiting');
@@ -155,7 +155,7 @@ export class Tracker {
       `window.vector.partnerId = "${fingerprint}";`,
       `vector.load("${token}");`,
     ].join('\n');
-    document.body.appendChild(script);
+    document.head.appendChild(script);
     this.logger.log(`Vector token: ${token}`);
     this.logger.log(`Vector script injected with partnerId (${fingerprint})`);
   }

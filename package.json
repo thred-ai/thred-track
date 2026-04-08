@@ -1,6 +1,6 @@
 {
   "name": "@thred-apps/thred-track",
-  "version": "1.4.33",
+  "version": "1.4.34",
   "description": "Browser SDK for lead tracking and enrichment from ChatGPT referrals",
   "type": "module",
   "main": "dist/index.js",

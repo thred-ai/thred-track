@@ -46,10 +46,10 @@ export class Tracker {
 
     const aiDetected = isFromAI() && !this.isDuplicateReferrer();
 
-    if (aiDetected) {
+    // if (aiDetected) {
       // load vector only if ai detected
       this.loadVector(fingerprint);
-    }
+    // }
 
     if (!this.config.hasChatSession && !aiDetected) {
       this.logger.log('No chat session for this fingerprint - exiting');

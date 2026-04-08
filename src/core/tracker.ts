@@ -141,12 +141,12 @@ export class Tracker {
    */
   private loadVector(fingerprint: string): void {
     if (typeof window === 'undefined' || typeof document === 'undefined') return;
-    if (!this.config?.vectorBrowserToken) {
+    if (!this.config?.vector) {
       this.logger.log('Vector config not present, skipping');
       return;
     }
 
-    const token = this.config.vectorBrowserToken;
+    const token = this.config.vector;
     const script = document.createElement('script');
     script.type = 'text/javascript';
     script.id = '__vector__';

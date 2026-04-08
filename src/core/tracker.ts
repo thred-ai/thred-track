@@ -157,7 +157,7 @@ export class Tracker {
     ].join('\n');
     document.head.appendChild(script);
     this.logger.log(`Vector token: ${token}`);
-    this.logger.log(`Vector script injected with partnerId (${fingerprint})`);
+    this.logger.log(`Vector script injected with partnerId (${JSON.stringify({userId: fingerprint})})`);
   }
 
   private isDuplicateReferrer(): boolean {

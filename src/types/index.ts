@@ -4,14 +4,7 @@
 
 export interface ThredConfig {
   enabled: boolean;
-  hasChatSession: boolean;
-  type: "hosted" | "custom",
-  hostedUrlBase?: string;
-  formId?: string;
-  emailId?: string;
-  nameId?: string;
   sessionCode?: string;
-  companyId?: string;
   radarProfileId?: string;
   radarCdn?: string;
   radarApiEndpoint?: string;
@@ -55,7 +48,6 @@ export interface FingerprintResult {
 export interface ThredSDK {
   init(): Promise<void>;
   trackPageView(): Promise<void>;
-  trackFormSubmit(formData: FormData): Promise<void>;
   identify(leadData: LeadData): Promise<void>;
   getFingerprint(): string | null;
   isFromChatGPT(): boolean;

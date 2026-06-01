@@ -59,10 +59,10 @@ export class ThredSDK implements IThredSDK {
 
     this.logger.log('Initializing Thred SDK...');
 
-    // Generate fingerprint
-    await this.fingerprint.getFingerprint();
+    // Only AI-sourced visitors are fingerprinted (handled inside tracker.init()).
+    // Skip the upfront fingerprint generation for every visitor.
+    // await this.fingerprint.getFingerprint();
 
-    // Initialize tracker
     await this.tracker.init();
 
     this.initialized = true;
@@ -109,13 +109,6 @@ export class ThredSDK implements IThredSDK {
    */
   async trackPageView(): Promise<void> {
     await this.tracker.trackPageView();
-  }
-
-  /**
-   * Track form submission
-   */
-  async trackFormSubmit(formData: FormData): Promise<void> {
-    await this.tracker.trackFormSubmit(formData);
   }
 
   /**

@@ -59,8 +59,10 @@ export class ThredSDK implements IThredSDK {
 
     this.logger.log('Initializing Thred SDK...');
 
-    // Every visitor is fingerprinted inside tracker.init() — the identity
-    // stack (Radar/Vector) now runs on all visits, not just AI referrals.
+    // Only AI-sourced visitors are fingerprinted (handled inside tracker.init()).
+    // Skip the upfront fingerprint generation for every visitor.
+    // await this.fingerprint.getFingerprint();
+
     await this.tracker.init();
 
     this.initialized = true;
